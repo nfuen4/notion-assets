@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python I Drill Card</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --surface:#ffffff; --surface-2:#f0efec;
+    --ink:#1c1d21; --ink-2:#51535a; --ink-3:#888b93;
+    --line:#e3e2de;
+    --py:#2f6690; --py-soft:#e4eef5;
+    --open:#26734d; --open-soft:#e0f0e7;
+    --shut:#8d3b4a; --shut-soft:#f8e4e7;
+    --hi:#a8552f; --hi-soft:#f9e9e1;
+    --radius:10px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#151619; --surface:#1e1f23; --surface-2:#26272c;
+      --ink:#ecebe8; --ink-2:#a6a8af; --ink-3:#757880;
+      --line:#31333a;
+      --py:#78b3dc; --py-soft:#1b2c39;
+      --open:#6cc194; --open-soft:#172c21;
+      --shut:#e0808f; --shut-soft:#331d22;
+      --hi:#e09468; --hi-soft:#33211a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#151619; --surface:#1e1f23; --surface-2:#26272c;
+    --ink:#ecebe8; --ink-2:#a6a8af; --ink-3:#757880;
+    --line:#31333a;
+    --py:#78b3dc; --py-soft:#1b2c39;
+    --open:#6cc194; --open-soft:#172c21;
+    --shut:#e0808f; --shut-soft:#331d22;
+    --hi:#e09468; --hi-soft:#33211a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px; margin:0 auto; padding:32px 16px 56px}
+
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin:0 0 8px}
+  h1{font-size:30px; line-height:1.15; margin:0 0 10px; letter-spacing:-.02em; font-weight:650}
+  .dates{font-family:var(--mono); font-size:13px; color:var(--py); margin:0}
+
+  h2{font-size:13px; font-family:var(--mono); letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-3); margin:40px 0 14px; padding-bottom:8px;
+    border-bottom:1px solid var(--line); font-weight:500}
+
+  .thesis{background:var(--hi-soft); border:1px solid var(--hi);
+    border-radius:var(--radius); padding:20px 22px; margin:26px 0}
+  .thesis .h{font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--hi); font-weight:600; margin-bottom:8px}
+  .thesis p{margin:0 0 10px; font-size:15px; line-height:1.6}
+  .thesis p:last-child{margin-bottom:0}
+  .thesis b{color:var(--ink)}
+
+  /* ladder */
+  .ladder{display:flex; flex-direction:column-reverse; gap:6px}
+  .rung{display:grid; grid-template-columns:34px 1fr 118px; gap:14px; align-items:center;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:13px 16px}
+  .rung .lv{font-family:var(--mono); font-size:19px; font-weight:650; color:var(--py); text-align:center}
+  .rung .nm{font-size:15px; font-weight:600}
+  .rung .ds{font-size:12.5px; color:var(--ink-2); margin-top:2px; line-height:1.4}
+  .rung .ai{font-family:var(--mono); font-size:10px; letter-spacing:.07em; text-transform:uppercase;
+    text-align:center; padding:5px 6px; border-radius:6px; font-weight:600; line-height:1.3}
+  .ai.o{background:var(--open-soft); color:var(--open); border:1px solid var(--open)}
+  .ai.x{background:var(--shut-soft); color:var(--shut); border:1px solid var(--shut)}
+  .rung.key{border-color:var(--shut); background:var(--shut-soft)}
+  .ladder-note{font-size:12.5px; color:var(--ink-3); margin-top:12px}
+
+  /* session blocks */
+  .blocks{display:grid; grid-template-columns:repeat(4,1fr); gap:10px}
+  .blk{background:var(--surface); border:1px solid var(--line);
+    border-top:3px solid var(--py); border-radius:var(--radius); padding:15px}
+  .blk.shut{border-top-color:var(--shut)}
+  .blk .n{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3)}
+  .blk .t{font-size:15px; font-weight:650; margin:4px 0 2px}
+  .blk .m{font-family:var(--mono); font-size:12px; color:var(--py); margin-bottom:8px}
+  .blk .d{font-size:12.5px; color:var(--ink-2); line-height:1.45}
+  .blk .lv{margin-top:9px; padding-top:8px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:11px; color:var(--ink-3)}
+
+  .rules{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px}
+  .rule{background:var(--shut-soft); border:1px solid var(--shut); border-radius:var(--radius);
+    padding:13px 15px; font-size:13px; color:var(--ink-2); line-height:1.45}
+  .rule b{display:block; color:var(--shut); font-size:12px; font-family:var(--mono);
+    letter-spacing:.06em; text-transform:uppercase; margin-bottom:5px}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:4px}
+  th{text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+    padding:8px 10px; border-bottom:1px solid var(--line)}
+  td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top}
+  td:first-child{color:var(--ink); font-weight:500}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tr.hot td{background:var(--shut-soft)}
+  tr.hot td:first-child{color:var(--shut)}
+  .scroll-x{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  .roadmap td:first-child{white-space:nowrap}
+
+  footer{margin-top:42px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-3)}
+  footer .anchor{font-family:var(--mono); color:var(--py); font-size:12.5px}
+
+  @media (max-width:760px){
+    h1{font-size:25px}
+    .blocks{grid-template-columns:1fr 1fr}
+    .rules{grid-template-columns:1fr}
+    .rung{grid-template-columns:30px 1fr; gap:10px}
+    .rung .ai{grid-column:2; justify-self:start; padding:4px 10px; margin-top:4px}
+    table{font-size:12.5px}
+    th,td{padding:7px 7px}
+    .roadmap table{min-width:560px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Computing in Python I · GTx · Drill Card</p>
+    <h1>The Bloom's Ladder</h1>
+    <p class="dates">REVISED TAXONOMY + AI LAYER · 19 SEP → 31 OCT 2026</p>
+  </header>
+
+  <div class="thesis">
+    <div class="h">The diagnosis</div>
+    <p>Four attempts at Python foundations since May. Every one reached <b>Level 2,
+    Understanding</b>, and stopped. L01 Variables logged as "Done (deep)." Written
+    explanations of falsy values, short-circuit evaluation and loops in the Learning
+    Notebook. That is real Level 2 work, produced three separate times.</p>
+    <p><b>The pattern is not a motivation problem. It is a taxonomy problem.</b> Each attempt
+    built a better Level 1–2 apparatus — notes, guides, plans — and never crossed into the
+    levels where something has to run.</p>
+  </div>
+
+  <h2>The six levels, and where Claude is allowed</h2>
+  <div class="ladder">
+    <div class="rung">
+      <div class="lv">1</div>
+      <div><div class="nm">Remembering</div><div class="ds">Reproduce syntax, operators, type names and error categories from a blank page.</div></div>
+      <div class="ai o">Claude may quiz</div>
+    </div>
+    <div class="rung">
+      <div class="lv">2</div>
+      <div><div class="nm">Understanding</div><div class="ds">Predict what a program prints before running it. Trace every variable by hand.</div></div>
+      <div class="ai o">Checks after</div>
+    </div>
+    <div class="rung key">
+      <div class="lv">3</div>
+      <div><div class="nm">Applying</div><div class="ds">Requirement in plain English → working code. Empty file. Timer running.</div></div>
+      <div class="ai x">Closed</div>
+    </div>
+    <div class="rung">
+      <div class="lv">4</div>
+      <div><div class="nm">Analyzing</div><div class="ds">Find where behavior and your model diverge. Categorize every error by root cause.</div></div>
+      <div class="ai o">Hypothesis first</div>
+    </div>
+    <div class="rung">
+      <div class="lv">5</div>
+      <div><div class="nm">Evaluating</div><div class="ds">Two versions both work. Defend the one that ships, in writing.</div></div>
+      <div class="ai o">May argue back</div>
+    </div>
+    <div class="rung key">
+      <div class="lv">6</div>
+      <div><div class="nm">Creating</div><div class="ds">A public, running, explainable thing. The level this window is graded on.</div></div>
+      <div class="ai x">Closed first draft</div>
+    </div>
+  </div>
+  <p class="ladder-note">Claude performs levels 1–4 instantly and convincingly, which means
+  those levels prove nothing on their own any more. Levels 3 and 6 are unfalsifiable unless
+  the tool is shut first. That constraint is the only structural difference between this
+  attempt and the previous three.</p>
+
+  <h2>The Ladder Drill — 45 minutes, five days a week</h2>
+  <div class="blocks">
+    <div class="blk">
+      <div class="n">Block 1</div>
+      <div class="t">Recall</div>
+      <div class="m">5 min</div>
+      <div class="d">Cold Recall on yesterday. Blank page, no editor. Score only after the page is full.</div>
+      <div class="lv">LEVEL 1</div>
+    </div>
+    <div class="blk">
+      <div class="n">Block 2</div>
+      <div class="t">Predict</div>
+      <div class="m">8 min</div>
+      <div class="d">Trace Table or Predict-Then-Run on today's construct. Written before execution.</div>
+      <div class="lv">LEVEL 2</div>
+    </div>
+    <div class="blk shut">
+      <div class="n">Block 3</div>
+      <div class="t">Build</div>
+      <div class="m">25 min</div>
+      <div class="d">Blank Page Build, or Ship a Layer on artifact days. Everything closed.</div>
+      <div class="lv">LEVEL 3 → 6</div>
+    </div>
+    <div class="blk">
+      <div class="n">Block 4</div>
+      <div class="t">Interrogate</div>
+      <div class="m">7 min</div>
+      <div class="d">Error Triage log, plus one Break It or Refactor Judgment.</div>
+      <div class="lv">LEVEL 4 → 5</div>
+    </div>
+  </div>
+
+  <div class="rules">
+    <div class="rule"><b>Rule 1</b>Block 3 is closed-book. Notes, search and Claude stay shut until your attempt is in a file and has run.</div>
+    <div class="rule"><b>Rule 2</b>Block 4 never gets cut for time. If the session is short, shorten Block 3 instead.</div>
+    <div class="rule"><b>Rule 3</b>Blocks 1 and 2 stay written. Mental rehearsal feels like recall and is not.</div>
+  </div>
+
+  <h2>Drill library</h2>
+  <table>
+    <tr><th>Drill</th><th>Lvl</th><th>Time</th><th>What you do</th></tr>
+    <tr><td>Cold Recall</td><td class="num">1</td><td class="num">5 min</td><td>Blank page. Yesterday's syntax and rules from memory. Score only after it is full.</td></tr>
+    <tr><td>Trace Table</td><td class="num">2</td><td class="num">8 min</td><td>On paper, every variable's value after every line. Then run and diff.</td></tr>
+    <tr><td>Predict-Then-Run</td><td class="num">2</td><td class="num">5 min</td><td>Write the exact expected output first. Mismatches become triage entries.</td></tr>
+    <tr class="hot"><td>Blank Page Build</td><td class="num">3</td><td class="num">20–25</td><td>Requirement → running code. Empty file, timer, nothing open.</td></tr>
+    <tr><td>Error Triage</td><td class="num">4</td><td class="num">5 min</td><td>Log every error: category, root cause, fix. Closes every session without exception.</td></tr>
+    <tr><td>Break It</td><td class="num">4</td><td class="num">10 min</td><td>Plant a bug in working code. Walk away a minute. Diagnose from behavior alone.</td></tr>
+    <tr><td>Refactor Judgment</td><td class="num">5</td><td class="num">10 min</td><td>Write a second working version. Argue in writing which one ships.</td></tr>
+    <tr class="hot"><td>Ship a Layer</td><td class="num">6</td><td class="num">30–45</td><td>Add one chapter's capability to Campaign Readout. Commit it. Weekly.</td></tr>
+  </table>
+
+  <h2>Error triage — same three types as your calculus log</h2>
+  <table>
+    <tr><th>Code</th><th>Python category</th><th>Meaning</th><th>Remediation</th></tr>
+    <tr><td>A</td><td>Syntax error</td><td>Typo, missing colon, unbalanced paren. The model is fine.</td><td>Slow down. Read the line <i>above</i> the reported one.</td></tr>
+    <tr><td>B</td><td>Runtime error</td><td>Wrong type, division by zero, bad cast. A rule was misapplied.</td><td>Add to Cold Recall. Drill five targeted cases.</td></tr>
+    <tr class="hot"><td>C</td><td>Semantic error</td><td>It runs. The answer is wrong. Nothing complains.</td><td>Stop coding. Build a Trace Table by hand. This is a model failure.</td></tr>
+  </table>
+  <p style="font-size:12.5px;color:var(--ink-3);margin-top:12px">
+    Type C is the real curriculum. A crash tells you it is broken. A silently wrong open rate
+    does not — and that is the failure that would embarrass you in an actual campaign readout.
+  </p>
+
+  <h2>Six-week climb</h2>
+  <div class="scroll-x roadmap">
+  <table>
+    <tr><th>Week</th><th>Chapters</th><th>Ceiling</th><th>Drill emphasis</th><th>Gate</th></tr>
+    <tr><td>S0 · Sep 19–20</td><td>Ch 1</td><td class="num">1–2</td><td>Cold Recall, diagnostic</td><td>Repo exists</td></tr>
+    <tr><td>W1 · Sep 21–27</td><td>Ch 2, 3, 4</td><td class="num">2 → 3</td><td>Trace Table daily; triage becomes habit</td><td>v0.1 runs; 10 triage entries</td></tr>
+    <tr><td>W2 · Sep 28–Oct 4</td><td>Ch 5, 6, 7</td><td class="num">3 → 4</td><td>Blank Page Build daily; Break It ×2</td><td><b>v1.0 · Course I done, all at Level 3</b></td></tr>
+    <tr><td>W3 · Oct 5–11</td><td>Course II conditionals</td><td class="num">4</td><td>Break It, first Refactor Judgment</td><td>v1.1; a Type C found by trace</td></tr>
+    <tr><td>W4 · Oct 12–18</td><td>Course II loops</td><td class="num">4 → 5</td><td>Refactor Judgment ×2</td><td><b>v2.0 · one written design defense</b></td></tr>
+    <tr><td>W5 · Oct 19–25</td><td>Course II remaining</td><td class="num">5</td><td>Hostile-input testing</td><td>v2.5; 5 scenarios, 2 adversarial</td></tr>
+    <tr class="hot"><td>W6 · Oct 26–31</td><td>None — consolidation</td><td class="num">6</td><td>Ship a Layer, cold walkthrough</td><td><b>v3.0 published · 90-second cold explain</b></td></tr>
+  </table>
+  </div>
+  <p style="font-size:12.5px;color:var(--ink-3);margin-top:12px">
+    Week 6 adds no new material on purpose. Creating is a level, not a leftover. Every previous
+    attempt ran out of calendar before the top of the ladder, because the calendar was filled
+    with Levels 1 and 2 to the last day.
+  </p>
+
+  <h2>Mastery gates — pass or fail, self-scored honestly</h2>
+  <table>
+    <tr><th>Lvl</th><th>Gate</th><th>Fails if</th></tr>
+    <tr><td class="num">1</td><td>Operator set and error categories from a blank page, under 3 minutes</td><td>You reach for anything</td></tr>
+    <tr><td class="num">2</td><td>Ten-line trace with zero value mismatches</td><td>You run it first to check</td></tr>
+    <tr class="hot"><td class="num">3</td><td>Requirement → working code in 25 minutes, nothing open</td><td>You open Claude, notes or search before your file runs</td></tr>
+    <tr><td class="num">4</td><td>Diagnose a Type C bug from behavior, before adding print statements</td><td>You fix it by trial and error without naming the cause</td></tr>
+    <tr><td class="num">5</td><td>Two working versions, one paragraph defending the shipped one</td><td>The defense is "it felt cleaner"</td></tr>
+    <tr class="hot"><td class="num">6</td><td>Public repo, README, 90-second cold explanation</td><td>You need the code open to explain it</td></tr>
+  </table>
+
+  <footer>
+    <p>Your existing crystallization standard already encodes levels 2, 3 and 4 — explain it
+    to a non-programmer cold, write it from a requirement without looking anything up, and name
+    one edge case the happy path misses. All three, not two of three. That standard was
+    correct. It was never applied to a finished thing.</p>
+    <p class="anchor">Levels 5 and 6 are the extension it was missing.</p>
+  </footer>
+
+</div>
+</body>
+</html>
