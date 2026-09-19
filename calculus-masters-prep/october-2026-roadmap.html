@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>October Window</title>
+<style>
+  :root{
+    --bg:#f7f6f3; --surface:#ffffff; --surface-2:#f1efea;
+    --ink:#1f1d1a; --ink-2:#55504a; --ink-3:#8a837a;
+    --line:#e2ded7;
+    --accent:#b2543a; --accent-soft:#f6e6e0;
+    --gate:#7a5ea8; --gate-soft:#efe8f8;
+    --media:#3d7a6c; --media-soft:#e2f0ec;
+    --warn:#a8762a; --warn-soft:#f8eeda;
+    --radius:10px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#17171a; --surface:#1f1f23; --surface-2:#26262b;
+      --ink:#eceae6; --ink-2:#a9a49d; --ink-3:#77726b;
+      --line:#32323a;
+      --accent:#e0866a; --accent-soft:#3a251f;
+      --gate:#b199db; --gate-soft:#2b2338;
+      --media:#6fbfa9; --media-soft:#1c302c;
+      --warn:#d8a95a; --warn-soft:#332a18;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17171a; --surface:#1f1f23; --surface-2:#26262b;
+    --ink:#eceae6; --ink-2:#a9a49d; --ink-3:#77726b;
+    --line:#32323a;
+    --accent:#e0866a; --accent-soft:#3a251f;
+    --gate:#b199db; --gate-soft:#2b2338;
+    --media:#6fbfa9; --media-soft:#1c302c;
+    --warn:#d8a95a; --warn-soft:#332a18;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:32px 16px 56px}
+
+  header{margin-bottom:28px}
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin:0 0 8px
+  }
+  h1{font-size:30px; line-height:1.15; margin:0 0 10px; letter-spacing:-.02em; font-weight:650}
+  .dates{font-family:var(--mono); font-size:13px; color:var(--accent); margin:0}
+
+  .vision{
+    background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:var(--radius); padding:20px 22px; margin:26px 0;
+  }
+  .vision p{margin:0; font-size:16px; line-height:1.6}
+  .vision .anchor{
+    margin-top:14px; font-family:var(--mono); font-size:12px;
+    letter-spacing:.06em; color:var(--ink-3); text-transform:uppercase
+  }
+
+  h2{
+    font-size:13px; font-family:var(--mono); letter-spacing:.12em;
+    text-transform:uppercase; color:var(--ink-3);
+    margin:40px 0 14px; padding-bottom:8px; border-bottom:1px solid var(--line);
+    font-weight:500;
+  }
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:22px 0}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  .stat .n{font-size:24px; font-weight:650; letter-spacing:-.02em; line-height:1.1}
+  .stat .l{font-size:11.5px; color:var(--ink-3); margin-top:4px; line-height:1.35}
+
+  .releases{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:8px 0 4px}
+  .rel{
+    background:var(--surface); border:1px solid var(--line);
+    border-top:3px solid var(--gate); border-radius:var(--radius); padding:16px;
+  }
+  .rel .v{font-family:var(--mono); font-size:12px; color:var(--gate); letter-spacing:.04em}
+  .rel .t{font-size:16px; font-weight:600; margin:5px 0 2px}
+  .rel .s{font-size:12.5px; color:var(--ink-3)}
+  .rel .d{
+    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line);
+    font-family:var(--mono); font-size:12.5px; font-weight:600;
+  }
+
+  .weeks{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+  .wk{
+    display:grid; grid-template-columns:92px 1fr; gap:14px;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); padding:14px 16px;
+  }
+  .wk.gate{border-color:var(--gate); background:var(--gate-soft)}
+  .wk.now{border-color:var(--accent); background:var(--accent-soft)}
+  .wk .idx{font-family:var(--mono)}
+  .wk .idx .n{font-size:17px; font-weight:650; letter-spacing:-.01em}
+  .wk .idx .dt{font-size:11px; color:var(--ink-3); margin-top:2px; line-height:1.3}
+  .wk .body .hd{font-size:14.5px; font-weight:600; margin-bottom:5px}
+  .wk .body .sec{font-size:13px; color:var(--ink-2); line-height:1.5}
+  .wk .body .media{
+    margin-top:9px; padding-top:8px; border-top:1px dashed var(--line);
+    font-size:12.5px; color:var(--media);
+  }
+  .wk .body .media b{font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--media); font-weight:600; margin-right:6px}
+  .tag{
+    display:inline-block; font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.08em; text-transform:uppercase; padding:2px 7px;
+    border-radius:20px; margin-left:8px; vertical-align:2px; font-weight:600;
+  }
+  .tag.g{background:var(--gate); color:#fff}
+  .tag.n{background:var(--accent); color:#fff}
+
+  .cliff{
+    background:var(--warn-soft); border:1px solid var(--warn);
+    border-radius:var(--radius); padding:18px 20px; margin-top:10px;
+  }
+  .cliff h3{margin:0 0 8px; font-size:15.5px; font-weight:650; color:var(--ink)}
+  .cliff p{margin:0 0 12px; font-size:13.5px; color:var(--ink-2)}
+  .cliff ol{margin:0; padding-left:20px; font-size:13.5px; color:var(--ink-2)}
+  .cliff li{margin-bottom:5px}
+  .cliff li b{color:var(--ink)}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:4px}
+  th{
+    text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+    padding:8px 10px; border-bottom:1px solid var(--line);
+  }
+  td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top}
+  td:first-child{color:var(--ink); font-weight:500}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+
+  .tiers{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .tier{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:15px}
+  .tier .h{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--media); font-weight:600}
+  .tier .w{font-size:13px; font-weight:600; margin:5px 0 8px}
+  .tier .list{font-family:var(--mono); font-size:12px; color:var(--ink-2); line-height:1.8; word-spacing:2px}
+  .tier .cost{margin-top:10px; padding-top:8px; border-top:1px dashed var(--line); font-size:11.5px; color:var(--ink-3)}
+
+  footer{margin-top:42px; padding-top:16px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-3)}
+  footer .anchor{font-family:var(--mono); color:var(--accent); font-size:12.5px}
+
+  .scroll-x{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+  @media (max-width:720px){
+    table{font-size:12.5px}
+    th,td{padding:7px 7px}
+    .cliff{padding:16px 14px}
+    .cliff table{min-width:330px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .releases,.tiers{grid-template-columns:1fr}
+    h1{font-size:25px}
+    .wk{grid-template-columns:1fr; gap:8px}
+    .wk .idx{display:flex; align-items:baseline; gap:10px}
+    .wk .idx .dt{margin-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Calculus — Masters Prep · Product Roadmap</p>
+    <h1>The October Window</h1>
+    <p class="dates">19 SEP → 1 NOV 2026 · WEEK 2 → WEEK 8 · CHAPTERS P, 1, 2</p>
+  </header>
+
+  <div class="vision">
+    <p>By 1 November I will have closed Chapters P, 1 and 2 behind three closed-book tests at
+    80% or better. Not because the material got easier, but because I showed up for 55 minutes
+    a day and wrote down every mistake I made. October is not the month I become a math person.
+    October is the month the evidence gets too heavy to argue with.</p>
+    <div class="anchor">Three chapters · Three tests · Forty-four days</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">35<span style="font-size:14px;color:var(--ink-3)">h</span></div><div class="l">study time across 38 sessions</div></div>
+    <div class="stat"><div class="n">21</div><div class="l">textbook sections</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">closed-book mastery tests</div></div>
+    <div class="stat"><div class="n">33<span style="font-size:14px;color:var(--ink-3)">%</span></div><div class="l">of the 24-week program done</div></div>
+  </div>
+
+  <h2>Releases</h2>
+  <div class="releases">
+    <div class="rel">
+      <div class="v">v0.1</div>
+      <div class="t">Algebra Core</div>
+      <div class="s">Chapter P · P.1–P.9</div>
+      <div class="d" style="color:var(--gate)">SUN 4 OCT · Phase Gate 1</div>
+    </div>
+    <div class="rel">
+      <div class="v">v0.2</div>
+      <div class="t">Functions</div>
+      <div class="s">Chapter 1 · 1.1–1.10</div>
+      <div class="d" style="color:var(--gate)">SUN 18 OCT · Chapter Test</div>
+    </div>
+    <div class="rel">
+      <div class="v">v0.3</div>
+      <div class="t">Polynomial &amp; Rational</div>
+      <div class="s">Chapter 2 · 2.1–2.8</div>
+      <div class="d" style="color:var(--gate)">SUN 1 NOV · Phase Gate 2</div>
+    </div>
+  </div>
+
+  <h2>Week by week</h2>
+  <div class="weeks">
+
+    <div class="wk now">
+      <div class="idx"><div class="n">W2</div><div class="dt">Sep 14–20</div></div>
+      <div class="body">
+        <div class="hd">Factoring &amp; Rational Expressions<span class="tag n">now</span></div>
+        <div class="sec">P.5 Factoring · Mid-Chapter Checkpoint · P.6 Rational Expressions</div>
+        <div class="media"><b>Media</b>Week 3 package — P.7 / P.8 / P.9 — due tonight. The ChatGPT Work pilot runs on P.7.</div>
+      </div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W3</div><div class="dt">Sep 21–27</div></div>
+      <div class="body">
+        <div class="hd">Equations, Applications &amp; Inequalities</div>
+        <div class="sec">P.7 Equations · P.8 Modeling · P.9 Linear &amp; absolute value inequalities</div>
+        <div class="media"><b>Media</b>Week 4 — Chapter P synthesis map + error-pattern sheet</div>
+      </div>
+    </div>
+
+    <div class="wk gate">
+      <div class="idx"><div class="n">W4</div><div class="dt">Sep 28–Oct 4</div></div>
+      <div class="body">
+        <div class="hd">Chapter P Mastery Review<span class="tag g">Gate 1</span></div>
+        <div class="sec">Review exercises → closed-book Chapter P test (≥80%) · front-load 1.1–1.2 on days 5–6</div>
+        <div class="media"><b>Media</b>Week 5 — full packages for 1.3 and 1.5</div>
+      </div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W5</div><div class="dt">Oct 5–11</div></div>
+      <div class="body">
+        <div class="hd">Functions, Difference Quotient &amp; Slope</div>
+        <div class="sec">1.1–1.5 · Mid-Chapter Checkpoint · the difference quotient appears here</div>
+        <div class="media"><b>Media</b>Week 6 — full packages for 1.6 and 1.7</div>
+      </div>
+    </div>
+
+    <div class="wk gate">
+      <div class="idx"><div class="n">W6</div><div class="dt">Oct 12–18</div></div>
+      <div class="body">
+        <div class="hd">Transformations, Composites &amp; Inverses<span class="tag g">Test</span></div>
+        <div class="sec">1.6–1.10 → closed-book Chapter 1 test (≥80%)</div>
+        <div class="media"><b>Media</b>Week 7 — full package for 2.4</div>
+      </div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W7</div><div class="dt">Oct 19–25</div></div>
+      <div class="body">
+        <div class="hd">Complex Numbers, Quadratics &amp; Division</div>
+        <div class="sec">2.1–2.5 · synthetic division, remainder and factor theorems, zeros</div>
+        <div class="media"><b>Media</b>Week 8 — full packages for 2.6 and 2.7</div>
+      </div>
+    </div>
+
+    <div class="wk gate">
+      <div class="idx"><div class="n">W8</div><div class="dt">Oct 26–Nov 1</div></div>
+      <div class="body">
+        <div class="hd">Rational Functions, Asymptotes &amp; Inequalities<span class="tag g">Gate 2</span></div>
+        <div class="sec">Mid-Chapter Checkpoint · 2.6–2.8 → closed-book Chapter 2 test (≥80%)</div>
+        <div class="media"><b>Media</b>Hold. Do not build Chapter 3 assets in a gate week.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2>The 5 October pace cliff</h2>
+  <div class="cliff">
+    <h3>The workload roughly doubles the day Chapter 1 starts</h3>
+    <p>Chapter P gets nearly three 55-minute sessions per section. Chapter 1 gets barely one —
+    and 1.3, 1.6 and 1.7 are the first genuinely abstract sections in the book. The schedule
+    silently assumes functions are half as hard as exponent rules.</p>
+    <div class="scroll-x" style="margin-bottom:14px"><table>
+      <tr><th>Chapter</th><th>Sections</th><th>Weeks</th><th>Sections / week</th><th>Sessions / section</th></tr>
+      <tr><td>P</td><td class="num">9</td><td class="num">4</td><td class="num">2.3</td><td class="num">~2.7</td></tr>
+      <tr><td>1</td><td class="num">10</td><td class="num">2</td><td class="num">5.0</td><td class="num">~1.2</td></tr>
+      <tr><td>2</td><td class="num">8</td><td class="num">2</td><td class="num">4.0</td><td class="num">~1.5</td></tr>
+    </table></div>
+    <ol>
+      <li><b>Front-load in Week 4.</b> Chapter P week 4 is review only. If the review is clean by Thursday, spend days 5–6 on 1.1 and 1.2 — the two lightest sections in Chapter 1.</li>
+      <li><b>Fast-pass the procedural sections.</b> 1.1, 1.4, 1.9, 1.10, 2.1 and 2.8 get one drill-heavy session each and no media.</li>
+      <li><b>Protect the hard four.</b> 1.3, 1.5, 1.6 and 1.7 get the recovered sessions. If something slips, it slips from 1.9 — never from the difference quotient.</li>
+    </ol>
+  </div>
+
+  <h2>Media production tiering</h2>
+  <div class="tiers">
+    <div class="tier">
+      <div class="h">Tier 1</div>
+      <div class="w">Anchor + 3 visuals + deck</div>
+      <div class="list">P.7 · 1.3 · 1.5 · 1.6<br>1.7 · 2.4 · 2.6 · 2.7</div>
+      <div class="cost">8 sections → 32 visuals, 8 decks</div>
+    </div>
+    <div class="tier">
+      <div class="h">Tier 2</div>
+      <div class="w">Anchor visual + retrieval questions</div>
+      <div class="list">P.8 · P.9 · 1.2 · 1.8<br>2.2 · 2.3 · 2.5</div>
+      <div class="cost">7 sections → 14 visuals, no decks</div>
+    </div>
+    <div class="tier">
+      <div class="h">Tier 3</div>
+      <div class="w">Retrieval card only</div>
+      <div class="list">1.1 · 1.4 · 1.9 · 1.10<br>2.1 · 2.8</div>
+      <div class="cost">6 sections → no production</div>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--ink-3);margin-top:12px">
+    Uniform production across all 21 sections would mean about 80 visuals and 21 decks — a second
+    full-time project. Tiering brings it to 46 visuals and 8 decks, roughly eight visuals a week.
+  </p>
+
+  <h2>Success metrics</h2>
+  <table>
+    <tr><th>Metric</th><th>Target by 1 Nov</th><th>Why it matters</th></tr>
+    <tr><td>Session adherence</td><td class="num">≥ 90%</td><td>The strongest predictor of the gate scores</td></tr>
+    <tr><td>Gate scores</td><td class="num">≥ 80% ×3</td><td>The published exit criterion</td></tr>
+    <tr><td>Type C defects</td><td class="num">&lt; 10%</td><td>Conceptual blockers should be rare by Chapter 2</td></tr>
+    <tr><td>Media lead time</td><td class="num">≥ 1 day</td><td>Production ahead of study is the whole point</td></tr>
+    <tr><td>Buffer days used</td><td class="num">≤ 1 / week</td><td>Regular buffer use means the plan is too tight</td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--ink-3);margin-top:12px">
+    Watch the defect mix, not the test scores. A score says what happened once. The error
+    taxonomy says what is still fragile.
+  </p>
+
+  <h2>Live risks</h2>
+  <table>
+    <tr><th>Risk</th><th>Response</th></tr>
+    <tr><td>Week 3 assets not ready for Monday</td><td>Finish the P.7 pilot this weekend. If it slips, study P.7 from the textbook and treat the pilot as a retrospective.</td></tr>
+    <tr><td>Every schedule row still reads "Not started"</td><td>Update Weeks 1–2 tonight. Two minutes of status hygiene makes the burndown real.</td></tr>
+    <tr><td>Chapter P gate lands at 70–79%</td><td>Decide now, before taking it: do not advance. Spend Week 5 on remediation and shift the window one week right.</td></tr>
+    <tr><td>ChatGPT Work pilot never gets a verdict</td><td>Expand or drop by the end of Week 3. An unresolved pilot quietly eats production capacity all month.</td></tr>
+  </table>
+
+  <footer>
+    <p>Everything Chapter 11 needs is taught here. Factoring is P.5. Conjugate rationalization
+    is P.3. The difference quotient is 1.3. In October you shake hands with the derivative
+    without being introduced.</p>
+    <p class="anchor">One problem at a time. Doors open.</p>
+  </footer>
+
+</div>
+</body>
+</html>
