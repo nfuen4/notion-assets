@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python I October Window</title>
+<style>
+  :root{
+    --bg:#f7f7f5; --surface:#ffffff; --surface-2:#f0efec;
+    --ink:#1c1d21; --ink-2:#51535a; --ink-3:#888b93;
+    --line:#e3e2de;
+    --py:#2f6690; --py-soft:#e4eef5;
+    --gate:#26734d; --gate-soft:#e0f0e7;
+    --warn:#a8552f; --warn-soft:#f9e9e1;
+    --alert:#8d3b4a; --alert-soft:#f8e4e7;
+    --radius:10px;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#151619; --surface:#1e1f23; --surface-2:#26272c;
+      --ink:#ecebe8; --ink-2:#a6a8af; --ink-3:#757880;
+      --line:#31333a;
+      --py:#78b3dc; --py-soft:#1b2c39;
+      --gate:#6cc194; --gate-soft:#172c21;
+      --warn:#e09468; --warn-soft:#33211a;
+      --alert:#e0808f; --alert-soft:#331d22;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#151619; --surface:#1e1f23; --surface-2:#26272c;
+    --ink:#ecebe8; --ink-2:#a6a8af; --ink-3:#757880;
+    --line:#31333a;
+    --py:#78b3dc; --py-soft:#1b2c39;
+    --gate:#6cc194; --gate-soft:#172c21;
+    --warn:#e09468; --warn-soft:#33211a;
+    --alert:#e0808f; --alert-soft:#331d22;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px; margin:0 auto; padding:32px 16px 56px}
+
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-3); margin:0 0 8px}
+  h1{font-size:30px; line-height:1.15; margin:0 0 10px; letter-spacing:-.02em; font-weight:650}
+  .dates{font-family:var(--mono); font-size:13px; color:var(--py); margin:0}
+
+  h2{font-size:13px; font-family:var(--mono); letter-spacing:.12em; text-transform:uppercase;
+    color:var(--ink-3); margin:40px 0 14px; padding-bottom:8px;
+    border-bottom:1px solid var(--line); font-weight:500}
+
+  .vision{background:var(--surface); border:1px solid var(--line);
+    border-left:3px solid var(--py); border-radius:var(--radius); padding:20px 22px; margin:26px 0}
+  .vision p{margin:0; font-size:16px; line-height:1.6}
+  .vision .anchor{margin-top:14px; font-family:var(--mono); font-size:12px;
+    letter-spacing:.06em; color:var(--ink-3); text-transform:uppercase}
+
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin:22px 0}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px}
+  .stat .n{font-size:23px; font-weight:650; letter-spacing:-.02em; line-height:1.1}
+  .stat .l{font-size:11.5px; color:var(--ink-3); margin-top:4px; line-height:1.35}
+
+  .facts{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px}
+  .fact{background:var(--warn-soft); border:1px solid var(--warn); border-radius:var(--radius); padding:16px 18px}
+  .fact .h{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--warn); font-weight:600; margin-bottom:6px}
+  .fact .t{font-size:14.5px; font-weight:600; margin-bottom:6px; line-height:1.4}
+  .fact p{margin:0; font-size:13px; color:var(--ink-2)}
+
+  .diag{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px}
+  .diag .q{background:var(--surface-2); border-left:3px solid var(--py); border-radius:6px;
+    padding:12px 14px; font-size:13.5px; margin:10px 0 14px; color:var(--ink-2)}
+
+  .weeks{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+  .wk{display:grid; grid-template-columns:96px 1fr 1fr; gap:14px; background:var(--surface);
+    border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px; align-items:start}
+  .wk.now{border-color:var(--py); background:var(--py-soft)}
+  .wk .idx .n{font-family:var(--mono); font-size:17px; font-weight:650}
+  .wk .idx .dt{font-family:var(--mono); font-size:11px; color:var(--ink-3); margin-top:2px; line-height:1.3}
+  .wk .col .lbl{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink-3); margin-bottom:4px}
+  .wk .col .v{font-size:13.5px; line-height:1.45}
+  .wk .col.art .v{color:var(--ink-2)}
+  .wk .col.art .v b{color:var(--ink)}
+
+  .gaterow{display:flex; align-items:center; gap:10px; background:var(--gate-soft);
+    border:1px solid var(--gate); border-radius:var(--radius); padding:11px 16px}
+  .gaterow .g{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    background:var(--gate); color:#fff; padding:3px 8px; border-radius:20px; font-weight:600; white-space:nowrap}
+  .gaterow .x{font-size:13.5px; font-weight:600}
+
+  table{width:100%; border-collapse:collapse; font-size:13.5px; margin-top:4px}
+  th{text-align:left; font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+    padding:8px 10px; border-bottom:1px solid var(--line)}
+  td{padding:9px 10px; border-bottom:1px solid var(--line); color:var(--ink-2); vertical-align:top}
+  td:first-child{color:var(--ink); font-weight:500}
+  td.num{font-family:var(--mono); white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  tr.hot td{background:var(--alert-soft)}
+  tr.hot td:first-child{color:var(--alert)}
+
+  .conflict{background:var(--alert-soft); border:1px solid var(--alert);
+    border-radius:var(--radius); padding:18px 20px}
+  .conflict h3{margin:0 0 8px; font-size:15.5px; font-weight:650}
+  .conflict p{margin:0 0 10px; font-size:13.5px; color:var(--ink-2)}
+  .conflict .quote{border-left:3px solid var(--alert); padding:2px 0 2px 12px;
+    font-size:13px; font-style:italic; color:var(--ink-2); margin:12px 0}
+  .conflict .rec{font-size:13.5px; color:var(--ink)}
+  .conflict .rec b{color:var(--alert)}
+
+  .scroll-x{overflow-x:auto; -webkit-overflow-scrolling:touch}
+
+  footer{margin-top:42px; padding-top:16px; border-top:1px solid var(--line);
+    font-size:12.5px; color:var(--ink-3)}
+  footer .anchor{font-family:var(--mono); color:var(--py); font-size:12.5px}
+
+  @media (max-width:760px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .facts{grid-template-columns:1fr}
+    h1{font-size:25px}
+    table{font-size:12.5px}
+    th,td{padding:7px 7px}
+    .wk{grid-template-columns:1fr; gap:10px}
+    .wk .idx{display:flex; align-items:baseline; gap:10px}
+    .wk .idx .dt{margin-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">GTx · Georgia Tech · edX · Product Roadmap</p>
+    <h1>Computing in Python I</h1>
+    <p class="dates">THE OCTOBER WINDOW · 19 SEP → 31 OCT 2026 · ATTEMPT FOUR</p>
+  </header>
+
+  <div class="vision">
+    <p>By 31 October I will have finished Computing in Python I and published one working
+    thing that someone else can open and run. Not a plan for a thing. The thing. This is the
+    fourth time I have started Python foundations, and the difference is not the syllabus —
+    the syllabus was never the problem. The difference is that the deliverable is an artifact
+    instead of a schedule.</p>
+    <div class="anchor">Finish the course fast · Ship the artifact anyway</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">7</div><div class="l">chapters in Course I</div></div>
+    <div class="stat"><div class="n">12–18<span style="font-size:13px;color:var(--ink-3)">h</span></div><div class="l">real time to finish, not edX's 45</div></div>
+    <div class="stat"><div class="n">0</div><div class="l">exams — auto-graded problems only</div></div>
+    <div class="stat"><div class="n">5</div><div class="l">artifact versions to ship</div></div>
+  </div>
+
+  <h2>Two facts that shape everything</h2>
+  <div class="facts">
+    <div class="fact">
+      <div class="h">Fact 1</div>
+      <div class="t">The course stops before <code>if</code> and <code>for</code></div>
+      <p>Conditionals and loops are Course II. Course I is sequential code only: variables,
+      operators, input, output, debugging. That limits what the artifact can be — and makes
+      the right artifact obvious.</p>
+    </div>
+    <div class="fact">
+      <div class="h">Fact 2</div>
+      <div class="t">You have already done most of it</div>
+      <p>Your roadmap records L01 Variables &amp; Memory Model as "Done (deep)." Your Learning
+      Notebook has written work on falsy values, short-circuit evaluation and loops. edX's
+      45-hour estimate assumes you have never seen a variable.</p>
+    </div>
+  </div>
+
+  <h2>Sprint 0 diagnostic — this weekend</h2>
+  <div class="diag">
+    <p style="margin:0 0 4px;font-size:13.5px;color:var(--ink-2)">Before watching a single video. Nothing open. Ten minutes, timed.</p>
+    <div class="q">Write a program that takes emails sent, emails opened and clicks, and prints
+    the open rate and click-through rate as percentages rounded to one decimal.</div>
+    <table>
+      <tr><th>Result</th><th>Track</th></tr>
+      <tr><td>Wrote it, no reference</td><td><b>Track A — Compressed.</b> Videos at 1.5–2×. Course I closes 4 Oct.</td></tr>
+      <tr><td>Structure fine, fumbled casting or rounding</td><td><b>Track A, with attention.</b> Same dates; drill the specific gap.</td></tr>
+      <tr><td>Could not start</td><td><b>Track B — Full.</b> Course I closes 18 Oct, all gates shift two weeks right.</td></tr>
+    </table>
+  </div>
+
+  <h2>Week by week</h2>
+  <div class="weeks">
+
+    <div class="wk now">
+      <div class="idx"><div class="n">S0</div><div class="dt">Sep 19–20</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Confirm enrollment · cold diagnostic · Ch 1 Computing</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>Repo created</b>, first commit</div></div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W1</div><div class="dt">Sep 21–27</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Ch 2 Programming · Ch 3 Debugging · Ch 4 Procedural Programming</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v0.1</b> — runs and prints; input→process→output skeleton; debugging log</div></div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W2</div><div class="dt">Sep 28–Oct 4</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Ch 5 Variables · Ch 6 Logical Operators · Ch 7 Mathematical Operators</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v1.0</b> — computes every metric with benchmark flags</div></div>
+    </div>
+
+    <div class="gaterow">
+      <span class="g">Gate 1 · Sun 4 Oct</span>
+      <span class="x">Course I complete · certificate decision closed</span>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W3</div><div class="dt">Oct 5–11</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Course II — conditionals</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v1.1</b> — branching logic replaces flat flags</div></div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W4</div><div class="dt">Oct 12–18</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Course II — loops</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v2.0</b> — handles a list of campaigns, not one</div></div>
+    </div>
+
+    <div class="gaterow">
+      <span class="g">Gate 2 · Sun 18 Oct</span>
+      <span class="x">Multi-campaign tool working</span>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W5</div><div class="dt">Oct 19–25</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Course II — remaining chapters</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v2.5</b> — refactored, edge cases handled</div></div>
+    </div>
+
+    <div class="wk">
+      <div class="idx"><div class="n">W6</div><div class="dt">Oct 26–31</div></div>
+      <div class="col"><div class="lbl">Course</div><div class="v">Consolidation. No new course material.</div></div>
+      <div class="col art"><div class="lbl">Artifact</div><div class="v"><b>v3.0</b> — README, cleanup, published</div></div>
+    </div>
+
+    <div class="gaterow">
+      <span class="g">Gate 3 · Sat 31 Oct</span>
+      <span class="x">Public repository, explainable in an interview</span>
+    </div>
+
+  </div>
+  <p style="font-size:12.5px;color:var(--ink-3);margin-top:12px">
+    Weeks 3–6 are a recommendation. Course I's seven chapters are verified; Course II's
+    breakdown is not. Confirm it on the edX dashboard. What is not negotiable is that four
+    weeks of October remain after Course I ends.
+  </p>
+
+  <h2>The artifact — Campaign Readout</h2>
+  <p style="font-size:13.5px;color:var(--ink-2);margin:0 0 12px">
+    One tool, built in layers, where each layer is the chapter you just finished. It takes raw
+    campaign counts and returns a performance readout with benchmark flags. Chosen because it
+    is buildable without loops, and because it sits in the domain you already know.
+  </p>
+  <table>
+    <tr><th>Chapter</th><th>What it adds</th></tr>
+    <tr><td>1 · Computing</td><td>Repository created, environment confirmed, first commit</td></tr>
+    <tr><td>2 · Programming</td><td>The file runs end to end and prints something</td></tr>
+    <tr><td>3 · Debugging</td><td>Break it deliberately; keep a written trace of each error and its fix</td></tr>
+    <tr><td>4 · Procedural Programming</td><td>The input → process → output skeleton</td></tr>
+    <tr><td>5 · Variables</td><td>Named metric variables; casting raw input strings to numbers</td></tr>
+    <tr><td>6 · Logical Operators</td><td>Benchmark flags — above or below target, eligible to scale</td></tr>
+    <tr><td>7 · Mathematical Operators</td><td>The rate math — open rate, CTR, conversion, cost per acquisition</td></tr>
+  </table>
+
+  <h2>The time conflict to resolve this weekend</h2>
+  <div class="conflict">
+    <h3>Calculus is sitting in the anchor's chair</h3>
+    <p>Your strategy document caps long-term math at 15% and assigns 45% to the analytics
+    anchor. Calculus currently runs 55 minutes a day, six days a week — 5.5 hours, roughly
+    45% of a realistic learning budget. For math to actually be 15%, the weekly total would
+    have to be near 37 hours.</p>
+    <div class="scroll-x">
+    <table style="margin-bottom:6px">
+      <tr><th>Bucket</th><th>Target</th><th>Hours at 12/wk</th><th>Reality today</th></tr>
+      <tr><td>Analytics Core (Python)</td><td class="num">45%</td><td class="num">5.4</td><td>Starting now</td></tr>
+      <tr><td>Integrated Portfolio</td><td class="num">25%</td><td class="num">3.0</td><td>The artifact</td></tr>
+      <tr class="hot"><td>Long-Term Math</td><td class="num">15%</td><td class="num">1.8</td><td><b>5.5 hrs committed</b></td></tr>
+      <tr><td>Lifecycle / Martech</td><td class="num">15%</td><td class="num">1.8</td><td>Maintenance</td></tr>
+    </table>
+    </div>
+    <div class="quote">Math should be consistent but bounded. It should not consume so much
+    current career-development time that it displaces the analytical skills that can be used
+    and demonstrated now.</div>
+    <p class="rec"><b>Recommendation:</b> drop calculus to three days a week for the six weeks
+    Python is the anchor. That is 2.75 hours, about 20%, and the streak survives. Restore six
+    days on 1 November. If that trade is unacceptable, Python is not really the anchor — and
+    the honest move is to set a smaller October target rather than miss a larger one.</p>
+  </div>
+
+  <h2>Risks</h2>
+  <table>
+    <tr><th>Risk</th><th>Response</th></tr>
+    <tr class="hot"><td>The restart pattern repeats — attempt five</td><td>No new plan documents until 31 October. Amendments go in a changelog line, never a new page. A new roadmap <i>is</i> the failure, not the fix.</td></tr>
+    <tr class="hot"><td>Environment setup eats week one</td><td>Do Sprint 0 and Week 1 entirely in the edX in-browser editor. No local install, no IDE config. This is the documented cause of the May failure.</td></tr>
+    <tr><td>Course too easy, attention drifts</td><td>Compress ruthlessly. The artifact, not the video count, is the reason to show up.</td></tr>
+    <tr><td>Calculus, PMP and the job search crowd out the anchor</td><td>Decide the calculus trade before Week 1 starts Monday.</td></tr>
+    <tr><td>Certificate question stays open</td><td>Decide at Gate 1. Audit is free, there is no proctored exam, and the artifact is the evidence.</td></tr>
+    <tr><td>Artifact slips because chapters feel more measurable</td><td>The gates are artifact gates. Chapters done with no artifact movement is a missed week.</td></tr>
+  </table>
+
+  <h2>Success metrics</h2>
+  <table>
+    <tr><th>Metric</th><th>Target</th><th>Why</th></tr>
+    <tr><td>Course I chapters</td><td class="num">7 / 7</td><td>The input, completed</td></tr>
+    <tr><td>Artifact versions shipped</td><td class="num">5</td><td>The output, shipped weekly</td></tr>
+    <tr><td>Public commits</td><td class="num">≥ 20</td><td>Evidence the work was continuous, not crammed</td></tr>
+    <tr class="hot"><td>New plan documents created</td><td class="num">0</td><td>The strongest predictor of whether this attempt is different</td></tr>
+    <tr><td>Weeks with visible artifact change</td><td class="num">≥ 5 / 6</td><td>Your own weekly artifact rule</td></tr>
+    <tr><td>Certificate decision</td><td class="num">by Oct 4</td><td>An open loop taxes every week after it</td></tr>
+  </table>
+
+  <footer>
+    <p>Four attempts since May produced four excellent plans and zero shipped things. Not one
+    failed on difficulty — L01 was completed deeply, and the Learning Notebook already holds
+    written work on loops and short-circuit evaluation. What has never existed is the artifact.</p>
+    <p class="anchor">This one has to produce one working thing.</p>
+  </footer>
+
+</div>
+</body>
+</html>
