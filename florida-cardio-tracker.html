@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FL-CARDIO // Cardio Habit Tracker</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* ==========================================================================
+       GEORGIA SERIF × FLORIDA LICENSE PLATE × IA BEST PRACTICES SYSTEM
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: transparent;
+      padding: 0.5rem;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: geometricPrecision;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+
+    .fl-plate-frame {
+      /* High-Contrast Surface & Ink Tokens */
+      --plate-bg: #F6F4EC;
+      --plate-card-bg: #FFFEFA;
+      --plate-surface: #EAE6D8;
+      --plate-cell-bg: rgba(246, 244, 236, 0.46);
+      --plate-cell-hover: rgba(255, 254, 250, 0.86);
+      --plate-ink: #0B120E;
+      --plate-secondary: #2C3A32;
+      --plate-muted: #4A5850;
+      --plate-hairline: #B8B3A2;
+      --plate-border-strong: #8F8A78;
+
+      /* Authentic Florida License Plate Palette */
+      --fl-green: #005733;
+      --fl-green-deep: #003B22;
+      --fl-green-checker: rgba(0, 87, 51, 0.11);
+      --fl-green-tint: rgba(0, 87, 51, 0.09);
+      --fl-orange: #F25C19;
+      --fl-orange-deep: #C93E00;
+      --fl-terracotta: #8F2D00;
+      --fl-sun-gold: #FFC629;
+
+      --font-georgia: Georgia, 'Times New Roman', Times, serif;
+
+      --emboss-green:
+        0 1.5px 0 rgba(255, 255, 255, 0.95),
+        0 -1px 0 rgba(0, 35, 18, 0.4),
+        0 3px 6px rgba(0, 55, 30, 0.14);
+      --emboss-orange:
+        0 1.5px 0 rgba(255, 255, 255, 0.92),
+        0 -1px 0 rgba(140, 35, 0, 0.35),
+        0 2px 5px rgba(217, 67, 0, 0.15);
+
+      --plate-shadow:
+        0 24px 50px -14px rgba(11, 18, 14, 0.25),
+        0 6px 16px -3px rgba(11, 18, 14, 0.10),
+        inset 0 2px 1px rgba(255, 255, 255, 0.95),
+        inset 0 -3px 2px rgba(0, 0, 0, 0.10);
+
+      container: plate / inline-size;
+      inline-size: min(100%, 940px);
+      margin-inline: auto;
+      background-color: var(--plate-bg);
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, 0.8) 0%, transparent 62%),
+        repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.007) 0px, rgba(0, 0, 0, 0.007) 1px, transparent 1px, transparent 4px);
+      color: var(--plate-ink);
+      font-family: var(--font-georgia);
+      font-variant-numeric: lining-nums tabular-nums;
+      border-radius: 22px;
+      padding: 0.85rem;
+      box-shadow: var(--plate-shadow);
+      border: 2px solid #BDB8A6;
+      position: relative;
+      overflow: clip;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .fl-plate-frame[data-theme="night-plate"] {
+      --plate-bg: #0C1210;
+      --plate-card-bg: #141E1A;
+      --plate-surface: #101815;
+      --plate-cell-bg: rgba(12, 18, 16, 0.50);
+      --plate-cell-hover: rgba(24, 36, 31, 0.88);
+      --plate-ink: #F5F3EB;
+      --plate-secondary: #D0DBD5;
+      --plate-muted: #93A39B;
+      --plate-hairline: #283A32;
+      --plate-border-strong: #385045;
+      --fl-green: #00CA7D;
+      --fl-green-deep: #004D2F;
+      --fl-green-checker: rgba(0, 202, 125, 0.13);
+      --fl-green-tint: rgba(0, 202, 125, 0.11);
+      --fl-orange: #FF7330;
+      --fl-orange-deep: #E04800;
+      --fl-terracotta: #B8420A;
+      --fl-sun-gold: #FFD03B;
+      --emboss-green: 0 2px 4px rgba(0, 0, 0, 0.85);
+      --emboss-orange: 0 2px 4px rgba(0, 0, 0, 0.85);
+      border-color: #263830;
+      background-image: radial-gradient(ellipse at 50% 0%, rgba(0, 202, 125, 0.07) 0%, transparent 60%);
+    }
+
+    /* Raised Embossed Green Plate Rim */
+    .fl-plate-rim {
+      border: 3px solid var(--fl-green);
+      border-radius: 14px;
+      position: relative;
+      z-index: 2;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+        0 1px 0 rgba(255, 255, 255, 0.7);
+      overflow: clip;
+    }
+
+    .bolt-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: safe center;
+      padding-inline: 1.75rem;
+      padding-block: 0.25rem;
+    }
+
+    .bolt-slot {
+      inline-size: 32px;
+      block-size: 8px;
+      border-radius: 999px;
+      background: #D8D4C5;
+      border: 1.5px solid #ABA696;
+      box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.32), 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .fl-plate-frame[data-theme="night-plate"] .bolt-slot {
+      background: #080C0A;
+      border-color: #23322B;
+    }
+
+    /* ==========================================================================
+       TIER 1: GLOBAL WAYFINDING & PLACEMAKING HEADER
+       Subheader: CARDIO HABIT TRACKER
+       ========================================================================== */
+    .plate-wayfinding-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0.75rem 1.15rem;
+      border-block-end: 2px solid var(--fl-green);
+      background: var(--plate-card-bg);
+      position: relative;
+      z-index: 2;
+      gap: 0.75rem;
+    }
+
+    @container plate (inline-size < 640px) {
+      .plate-wayfinding-header {
+        grid-template-columns: 1fr auto;
+      }
+      .myflorida-header-group {
+        grid-column: 1 / -1;
+        order: -1;
+      }
+    }
+
+    .temporal-wayfinding {
+      display: flex;
+      align-items: safe center;
+      gap: 0.4rem;
+    }
+
+    .month-pill-nav {
+      display: inline-flex;
+      align-items: safe center;
+      background: var(--plate-bg);
+      border: 1.5px solid var(--plate-border-strong);
+      border-radius: 4px;
+      overflow: clip;
+    }
+
+    .month-nav-btn {
+      appearance: none;
+      background: transparent;
+      color: var(--plate-ink);
+      border: none;
+      padding: 0.3rem 0.55rem;
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.12s ease;
+    }
+
+    .month-nav-btn:hover {
+      background: var(--fl-green-tint);
+      color: var(--fl-green);
+    }
+
+    .month-label-display {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      min-inline-size: 112px;
+      text-align: center;
+      color: var(--fl-green);
+      border-inline: 1px solid var(--plate-hairline);
+      padding-block: 0.28rem;
+      padding-inline: 0.45rem;
+    }
+
+    .myflorida-header-group {
+      text-align: center;
+    }
+
+    .myflorida-domain {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: clamp(1.3rem, 3.1cqi, 1.7rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--fl-orange);
+      text-shadow: var(--emboss-orange);
+      line-height: 1;
+    }
+
+    .myflorida-sub {
+      display: block;
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--fl-green);
+      margin-block-start: 0.25rem;
+    }
+
+    .decal-cluster {
+      display: flex;
+      justify-content: flex-end;
+      align-items: safe center;
+      gap: 0.55rem;
+    }
+
+    .fl-decal-sticker {
+      background: linear-gradient(135deg, #FFDF4D 0%, #FFBF00 100%);
+      color: #0B120E;
+      border: 2px solid #0B120E;
+      border-radius: 3px;
+      padding: 0.18rem 0.55rem;
+      font-family: var(--font-georgia);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.08;
+      box-shadow: 2.5px 2.5px 0 rgba(11, 18, 14, 0.24);
+      transform: rotate(1deg);
+    }
+
+    .fl-decal-sticker .decal-top {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .fl-decal-sticker .decal-main {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    /* ==========================================================================
+       TIER 2: 2×2 EQUAL QUADRANT WITH CHECKERBOARD GREEN PATTERN
+       ========================================================================== */
+    .swiss-telemetry-band {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      border-block-end: 2px solid var(--fl-green);
+      background: var(--plate-card-bg);
+      position: relative;
+      z-index: 2;
+    }
+
+    .telemetry-card {
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.32rem;
+      background: var(--plate-card-bg);
+    }
+
+    /* Crisp Horizontal & Vertical Quadrant Split Lines */
+    .telemetry-card:nth-child(1),
+    .telemetry-card:nth-child(2) {
+      border-block-end: 1.5px solid var(--plate-hairline);
+    }
+
+    .telemetry-card:nth-child(1),
+    .telemetry-card:nth-child(3) {
+      border-inline-end: 1.5px solid var(--plate-hairline);
+    }
+
+    /* Checkerboard Pattern: Slice 1 (Top-Left) & Slice 4 (Bottom-Right) in Matching Green */
+    .telemetry-card.is-checker-green {
+      background: var(--fl-green-checker);
+    }
+
+    .telemetry-header {
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--plate-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: safe center;
+    }
+
+    .telemetry-badge {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fl-green);
+      background: rgba(0, 87, 51, 0.12);
+      padding: 0.08rem 0.42rem;
+      border-radius: 3px;
+    }
+
+    .fl-plate-frame[data-theme="night-plate"] .telemetry-badge {
+      background: rgba(0, 202, 125, 0.18);
+    }
+
+    .plate-serial-display {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: clamp(1.65rem, 3.6cqi, 2.15rem);
+      letter-spacing: 0.07em;
+      color: var(--fl-green);
+      line-height: 1;
+      text-transform: uppercase;
+      text-shadow: var(--emboss-green);
+      display: flex;
+      align-items: safe center;
+      gap: 0.32rem;
+    }
+
+    .serial-citrus-badge {
+      inline-size: 24px;
+      block-size: 24px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.25));
+    }
+
+    .kpi-value {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: clamp(1.4rem, 3cqi, 1.85rem);
+      color: var(--plate-ink);
+      line-height: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 0.32rem;
+    }
+
+    .kpi-value .unit {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fl-orange-deep);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .kpi-subtext {
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--plate-secondary);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       TIER 3: SYMMETRICAL 3×3 STAMP SELECTOR DECK
+       Left: 3 Solo Walk Levels | Right: 3 Combination Walk Levels (60m Max)
+       ========================================================================== */
+    .stamp-selector-deck {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      padding: 0.75rem 1.1rem;
+      background: var(--plate-surface);
+      border-block-end: 2.5px solid var(--fl-green);
+      position: relative;
+      z-index: 2;
+    }
+
+    @container plate (inline-size < 580px) {
+      .stamp-selector-deck {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stamp-cluster {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+      background: var(--plate-card-bg);
+      border: 1.5px solid var(--plate-hairline);
+      border-radius: 6px;
+      padding: 0.6rem 0.75rem;
+    }
+
+    .cluster-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--plate-secondary);
+      padding-block-end: 0.25rem;
+      border-block-end: 1px solid var(--plate-hairline);
+    }
+
+    .cluster-header .scope-note {
+      font-style: italic;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--plate-muted);
+    }
+
+    /* 3-Level Symmetrical Vertical Stack in Both Columns */
+    .cluster-buttons-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+      justify-content: space-between;
+    }
+
+    .stamp-option-btn, .swiss-btn {
+      appearance: none;
+      background: var(--plate-bg);
+      color: var(--plate-ink);
+      border: 1.5px solid var(--plate-border-strong);
+      border-radius: 4px;
+      padding: 0.42rem 0.7rem;
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: flex;
+      align-items: safe center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      transition: all 0.14s ease;
+      inline-size: 100%;
+    }
+
+    .swiss-btn {
+      inline-size: auto;
+      text-transform: uppercase;
+      padding: 0.28rem 0.55rem;
+    }
+
+    .stamp-option-btn:hover, .swiss-btn:hover {
+      border-color: var(--fl-green);
+      background: var(--plate-cell-hover);
+    }
+
+    .stamp-option-btn .btn-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .stamp-option-btn .btn-duration {
+      font-size: 12px;
+      padding: 0.1rem 0.38rem;
+      border-radius: 3px;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    /* Active States for All 6 Options (3 Solo + 3 Combination) */
+    .stamp-option-btn[aria-pressed="true"][data-stamp="std"] {
+      background: var(--fl-green);
+      color: #FFFFFF;
+      border-color: var(--fl-green);
+      box-shadow: inset 4px 0 0 var(--fl-orange);
+    }
+
+    .stamp-option-btn[aria-pressed="true"][data-stamp="bkw"] {
+      background: #14281D;
+      color: var(--fl-sun-gold);
+      border-color: #14281D;
+      box-shadow: inset 4px 0 0 var(--fl-sun-gold);
+    }
+
+    .stamp-option-btn[aria-pressed="true"][data-stamp="bft"] {
+      background: var(--fl-terracotta);
+      color: #FFFDF7;
+      border-color: var(--fl-terracotta);
+      box-shadow: inset 4px 0 0 var(--fl-sun-gold);
+    }
+
+    .stamp-option-btn[aria-pressed="true"][data-stamp="combo_std"] {
+      background: linear-gradient(135deg, #005733 0%, #C93E00 100%);
+      color: #FFFFFF;
+      border-color: #005733;
+      box-shadow: inset 4px 0 0 var(--fl-sun-gold);
+    }
+
+    .stamp-option-btn[aria-pressed="true"][data-stamp="combo_bkw"] {
+      background: linear-gradient(135deg, #004D2C 0%, #14281D 100%);
+      color: #FFFFFF;
+      border-color: #004D2C;
+      box-shadow: inset 4px 0 0 var(--fl-sun-gold);
+    }
+
+    .stamp-option-btn[aria-pressed="true"][data-stamp="combo_bft"] {
+      background: linear-gradient(135deg, #004D2C 0%, #8F2D00 100%);
+      color: #FFFFFF;
+      border-color: #8F2D00;
+      box-shadow: inset 4px 0 0 var(--fl-orange);
+    }
+
+    .stamp-option-btn[aria-pressed="true"] .btn-duration {
+      background: rgba(255, 255, 255, 0.2);
+      color: inherit;
+    }
+
+    .swatch-dot {
+      inline-size: 10px;
+      block-size: 10px;
+      border-radius: 2px;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       CALENDAR MATRIX WITH CENTRALIZED, LARGE FLORIDA & ORANGE BLOSSOM ARTWORK
+       ========================================================================== */
+    .calendar-wrapper {
+      position: relative;
+      z-index: 2;
+      overflow: clip;
+    }
+
+    .calendar-artwork-backdrop {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: clip;
+    }
+
+    .calendar-artwork-svg {
+      inline-size: clamp(420px, 84cqi, 760px);
+      max-block-size: 95%;
+      block-size: auto;
+      opacity: 0.42;
+      filter: contrast(1.05) saturate(1.12);
+      transition: opacity 0.25s ease;
+    }
+
+    .fl-plate-frame[data-theme="night-plate"] .calendar-artwork-svg {
+      opacity: 0.26;
+    }
+
+    .weekday-header-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      border-block-end: 1.5px solid var(--fl-green);
+      background: var(--fl-green-tint);
+      position: relative;
+      z-index: 1;
+    }
+
+    .weekday-cell {
+      padding: 0.42rem 0.6rem;
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--fl-green);
+      border-inline-end: 1px solid var(--plate-hairline);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .weekday-cell:last-child {
+      border-inline-end: none;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Spacious Single-Stamp Day Cell */
+    .day-cell {
+      min-block-size: 86px;
+      padding: 0.45rem 0.5rem;
+      border-inline-end: 1px solid var(--plate-hairline);
+      border-block-end: 1px solid var(--plate-hairline);
+      background: var(--plate-cell-bg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      text-align: start;
+      transition: background-color 0.14s ease, box-shadow 0.14s ease;
+    }
+
+    .day-cell:nth-child(7n) {
+      border-inline-end: none;
+    }
+
+    .day-cell:hover:not(.is-empty) {
+      background-color: var(--plate-cell-hover);
+    }
+
+    .day-cell.is-empty {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(246, 244, 236, 0.25),
+        rgba(246, 244, 236, 0.25) 6px,
+        rgba(0, 87, 51, 0.035) 6px,
+        rgba(0, 87, 51, 0.035) 7px
+      );
+      cursor: default;
+    }
+
+    .fl-plate-frame[data-theme="night-plate"] .day-cell.is-empty {
+      background: repeating-linear-gradient(
+        -45deg,
+        rgba(12, 18, 16, 0.35),
+        rgba(12, 18, 16, 0.35) 6px,
+        rgba(0, 202, 125, 0.04) 6px,
+        rgba(0, 202, 125, 0.04) 7px
+      );
+    }
+
+    .day-cell.is-combo-day {
+      background: linear-gradient(160deg, rgba(0, 87, 51, 0.08) 0%, rgba(242, 92, 25, 0.11) 100%);
+      box-shadow: inset 0 0 0 1.5px rgba(0, 87, 51, 0.32);
+    }
+
+    .day-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      inline-size: 100%;
+    }
+
+    .day-num {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1;
+      color: var(--plate-ink);
+    }
+
+    .day-cell.is-today .day-num {
+      background: var(--fl-orange);
+      color: #FFFFFF;
+      padding: 0.14rem 0.36rem;
+      border-radius: 3px;
+    }
+
+    .day-mins-tag {
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--plate-secondary);
+    }
+
+    .day-cell.is-combo-day .day-mins-tag {
+      color: var(--fl-orange-deep);
+    }
+
+    /* Single Authoritative Stamp Badge Inside Stamped Cells */
+    .single-day-stamp {
+      margin-block-start: auto;
+      padding: 0.3rem 0.45rem;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      box-shadow: 0 2px 4px rgba(0, 25, 12, 0.18);
+      transition: transform 0.12s ease;
+    }
+
+    .single-day-stamp .stamp-main-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      line-height: 1.15;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .single-day-stamp .stamp-sub-detail {
+      font-size: 12px;
+      font-style: italic;
+      opacity: 0.92;
+      line-height: 1.1;
+    }
+
+    .single-day-stamp.stamp-std {
+      background: var(--fl-green);
+      color: #FFFFFF;
+      border-inline-start: 4px solid var(--fl-orange);
+    }
+
+    .single-day-stamp.stamp-bkw {
+      background: #14281D;
+      color: var(--fl-sun-gold);
+      border-inline-start: 4px solid var(--fl-sun-gold);
+    }
+
+    .single-day-stamp.stamp-bft {
+      background: var(--fl-terracotta);
+      color: #FFFDF7;
+      border-inline-start: 4px solid var(--fl-sun-gold);
+    }
+
+    .single-day-stamp.stamp-combo_std {
+      background: linear-gradient(135deg, #005733 0%, #C93E00 100%);
+      color: #FFFFFF;
+      border-inline-start: 4px solid var(--fl-sun-gold);
+    }
+
+    .single-day-stamp.stamp-combo_bkw {
+      background: linear-gradient(135deg, #005733 0%, #14281D 100%);
+      color: #FFFFFF;
+      border-inline-start: 4px solid var(--fl-sun-gold);
+    }
+
+    .single-day-stamp.stamp-combo_bft {
+      background: linear-gradient(135deg, #005733 0%, #8F2D00 100%);
+      color: #FFFFFF;
+      border-inline-start: 4px solid var(--fl-orange);
+    }
+
+    /* Clean Hover Preview on Unstamped Cells */
+    .hover-stamp-preview {
+      margin-block-start: auto;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--fl-green);
+      opacity: 0;
+      transition: opacity 0.12s ease;
+    }
+
+    .day-cell:hover:not(.is-empty) .hover-stamp-preview {
+      opacity: 0.9;
+    }
+
+    /* ==========================================================================
+       BOTTOM PLATE FOOTER: SUNSHINE STATE MOTTO
+       ========================================================================== */
+    .plate-bottom-bar {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 0.65rem 1.15rem;
+      gap: 0.75rem;
+      background: var(--plate-card-bg);
+      border-block-start: 1.5px solid var(--fl-green);
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-left {
+      font-family: var(--font-georgia);
+      font-size: 12px;
+      font-style: italic;
+      color: var(--plate-secondary);
+      font-weight: 700;
+    }
+
+    .sunshine-motto {
+      font-family: var(--font-georgia);
+      font-weight: 700;
+      font-size: clamp(1.05rem, 2.5cqi, 1.35rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--fl-orange);
+      text-align: center;
+      text-shadow: var(--emboss-orange);
+    }
+
+    .footer-right {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+
+  <main class="fl-plate-frame" id="plateRoot" aria-label="Florida License Plate Cardio Habit Tracker">
+    <!-- Top License Plate Bolt Slots -->
+    <div class="bolt-row" aria-hidden="true">
+      <span class="bolt-slot"></span>
+      <span class="bolt-slot"></span>
+    </div>
+
+    <div class="fl-plate-rim">
+
+      <!-- ====================================================================
+           TIER 1: GLOBAL WAYFINDING & PLACEMAKING HEADER
+           ==================================================================== -->
+      <header class="plate-wayfinding-header">
+        <nav class="temporal-wayfinding" aria-label="Month Navigation">
+          <div class="month-pill-nav">
+            <button type="button" class="month-nav-btn" id="prevMonthBtn" aria-label="Previous Month">◀</button>
+            <div class="month-label-display" id="currentMonthLabel">NOV 2026</div>
+            <button type="button" class="month-nav-btn" id="nextMonthBtn" aria-label="Next Month">▶</button>
+          </div>
+        </nav>
+
+        <div class="myflorida-header-group">
+          <h1 class="myflorida-domain">MYFLORIDA.COM</h1>
+          <span class="myflorida-sub">CARDIO HABIT TRACKER</span>
+        </div>
+
+        <div class="decal-cluster">
+          <button type="button" class="swiss-btn" id="themeToggleBtn" title="Toggle Day / Night Plate">◐ Plate</button>
+          <div class="fl-decal-sticker" title="Active Monthly Registration Sticker">
+            <span class="decal-top" id="decalMonthCode">NOV 26</span>
+            <span class="decal-main" id="decalSerialCode">FL·11</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ====================================================================
+           TIER 2: 2×2 EQUAL QUADRANT WITH CHECKERBOARD GREEN PATTERN
+           ==================================================================== -->
+      <section class="swiss-telemetry-band" aria-label="Monthly Cardio Summary Quadrant">
+        <!-- Slice 1: Top-Left (Green) -->
+        <div class="telemetry-card is-checker-green">
+          <div class="telemetry-header">
+            <span>01 · Plate Serial</span>
+            <span class="telemetry-badge">1 Stamp / Day</span>
+          </div>
+          <div class="plate-serial-display">
+            <span>CRD</span>
+            <svg class="serial-citrus-badge" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="18" r="11" fill="#FF621A" stroke="#005733" stroke-width="2"/>
+              <path d="M16 7 C16 2, 24 2, 25 7 C21 9, 18 8, 16 7 Z" fill="#005733"/>
+              <circle cx="13" cy="15" r="2" fill="#FFD452"/>
+            </svg>
+            <span id="plateSerialDynamic">525</span>
+          </div>
+          <div class="kpi-subtext">1.0 Hr (60m) Maximum Daily Cap</div>
+        </div>
+
+        <!-- Slice 2: Top-Right (Standard Ivory) -->
+        <div class="telemetry-card">
+          <div class="telemetry-header">
+            <span>02 · Consistency</span>
+            <span class="telemetry-badge" id="statCompletionBadge">37% of Month</span>
+          </div>
+          <div class="kpi-value">
+            <span id="statActiveDays">11</span><span class="unit">Days Logged</span>
+          </div>
+          <div class="kpi-subtext" id="statBestStreak">Best Streak: 4 Consecutive Days</div>
+        </div>
+
+        <!-- Slice 3: Bottom-Left (Standard Ivory) -->
+        <div class="telemetry-card">
+          <div class="telemetry-header">
+            <span>03 · Session Mix</span>
+            <span class="telemetry-badge" id="statComboCountBadge">7 Combo (60m)</span>
+          </div>
+          <div class="kpi-value">
+            <span id="statSoloVsCombo">4 Solo · 7 Combo</span>
+          </div>
+          <div class="kpi-subtext" id="statModalitySplit">9 Std · 2 Extra · 4 Bkw · 3 Barefoot</div>
+        </div>
+
+        <!-- Slice 4: Bottom-Right (Matching Checkerboard Green) -->
+        <div class="telemetry-card is-checker-green">
+          <div class="telemetry-header">
+            <span>04 · Total Volume</span>
+            <span class="telemetry-badge" id="statHoursBadge">8.8 Hrs</span>
+          </div>
+          <div class="kpi-value">
+            <span id="statTotalMinutes">525</span><span class="unit">Minutes</span>
+          </div>
+          <div class="kpi-subtext" id="statEstKcal">~4,200 Est. kcal Burned</div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           TIER 3: SYMMETRICAL 3×3 STAMP SELECTOR DECK
+           Left: 3 Solo Walk Levels | Right: 3 Combination Walk Levels (60m Max)
+           ==================================================================== -->
+      <section class="stamp-selector-deck" aria-label="Select Daily Session Stamp">
+        <!-- Group I: Solo Sessions (3 Stacked Levels) -->
+        <div class="stamp-cluster" role="group" aria-label="Solo Walk Stamps">
+          <div class="cluster-header">
+            <span>I. Solo Sessions</span>
+            <span class="scope-note">3 Single-Modality Levels</span>
+          </div>
+          <div class="cluster-buttons-stack">
+            <!-- Level 1: Standard Walk -->
+            <button type="button" class="stamp-option-btn" data-stamp="std" aria-pressed="true">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#005733; border-left:3px solid #F25C19;"></span>
+                <span>1. Standard Walk</span>
+              </span>
+              <span class="btn-duration">45 Min</span>
+            </button>
+
+            <!-- Level 2: Backwards Walk -->
+            <button type="button" class="stamp-option-btn" data-stamp="bkw" aria-pressed="false">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#14281D; border-left:3px solid #FFC629;"></span>
+                <span>2. Backwards Walk</span>
+              </span>
+              <span class="btn-duration">15 Min</span>
+            </button>
+
+            <!-- Level 3: Barefoot Walk -->
+            <button type="button" class="stamp-option-btn" data-stamp="bft" aria-pressed="false">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#8F2D00; border-left:3px solid #FFC629;"></span>
+                <span>3. Barefoot Walk</span>
+              </span>
+              <span class="btn-duration">15 Min</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Group II: Combination Sessions (3 Stacked 60-Min Max Levels) -->
+        <div class="stamp-cluster" role="group" aria-label="Combination Walk Stamps">
+          <div class="cluster-header">
+            <span>II. Combination Sessions</span>
+            <span class="scope-note">45m Std + 15m Add-On (60m Max)</span>
+          </div>
+          <div class="cluster-buttons-stack">
+            <!-- Combo Level 1: Standard 45m + 15m Extra Credit Push -->
+            <button type="button" class="stamp-option-btn" data-stamp="combo_std" aria-pressed="false">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#C93E00; border-left:3px solid #FFC629;"></span>
+                <span>1. Standard + Extra Credit (+15m)</span>
+              </span>
+              <span class="btn-duration">60m Max</span>
+            </button>
+
+            <!-- Combo Level 2: Standard 45m + 15m Backwards Walk -->
+            <button type="button" class="stamp-option-btn" data-stamp="combo_bkw" aria-pressed="false">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#004D2C; border-left:3px solid #FFC629;"></span>
+                <span>2. Standard + Backwards Walk</span>
+              </span>
+              <span class="btn-duration">60m Max</span>
+            </button>
+
+            <!-- Combo Level 3: Standard 45m + 15m Barefoot Walk -->
+            <button type="button" class="stamp-option-btn" data-stamp="combo_bft" aria-pressed="false">
+              <span class="btn-label">
+                <span class="swatch-dot" style="background:#8F2D00; border-left:3px solid #F25C19;"></span>
+                <span>3. Standard + Barefoot Walk</span>
+              </span>
+              <span class="btn-duration">60m Max</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====================================================================
+           CALENDAR MATRIX WITH LARGE, CENTRALIZED FLORIDA & ORANGE BLOSSOM ART
+           ==================================================================== -->
+      <section class="calendar-wrapper" aria-label="Monthly Calendar">
+        <div class="calendar-artwork-backdrop" aria-hidden="true">
+          <svg class="calendar-artwork-svg" viewBox="0 0 800 580" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="flStateGrad" x1="120" y1="40" x2="640" y2="520" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#FDB777" />
+                <stop offset="50%" stop-color="#FB924B" />
+                <stop offset="100%" stop-color="#F26A21" />
+              </linearGradient>
+
+              <radialGradient id="orangeFrontGrad" cx="34%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#FFD452" />
+                <stop offset="28%" stop-color="#FF8C24" />
+                <stop offset="72%" stop-color="#F0540A" />
+                <stop offset="100%" stop-color="#B83200" />
+              </radialGradient>
+
+              <radialGradient id="orangeRearGrad" cx="38%" cy="32%" r="68%">
+                <stop offset="0%" stop-color="#FFCA4B" />
+                <stop offset="35%" stop-color="#FF7714" />
+                <stop offset="80%" stop-color="#D94100" />
+                <stop offset="100%" stop-color="#9E2800" />
+              </radialGradient>
+
+              <linearGradient id="leafGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00854D" />
+                <stop offset="60%" stop-color="#005A34" />
+                <stop offset="100%" stop-color="#00381F" />
+              </linearGradient>
+
+              <linearGradient id="leafGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#199A5E" />
+                <stop offset="55%" stop-color="#00663B" />
+                <stop offset="100%" stop-color="#003D22" />
+              </linearGradient>
+
+              <radialGradient id="petalGrad" cx="50%" cy="65%" r="65%">
+                <stop offset="0%" stop-color="#FFF7D6" />
+                <stop offset="45%" stop-color="#FFFFFF" />
+                <stop offset="100%" stop-color="#E6E2D3" />
+              </radialGradient>
+            </defs>
+
+            <!-- High-Resolution Jagged Cartographic Path of Florida -->
+            <path d="
+              M 56 64
+              L 78 65 L 115 65 L 154 66 L 195 66 L 232 67
+              L 238 80 L 265 82 L 308 82 L 352 83 L 404 84 L 448 84
+              L 456 69 L 468 70 L 472 86 L 470 98
+              L 479 114 L 489 135 L 500 158 L 512 182
+              L 525 204 L 542 226 L 548 238 L 541 249
+              L 552 272 L 564 298 L 576 325 L 584 352
+              L 588 378 L 586 404 L 580 426 L 571 446
+              L 566 462 L 556 474
+              L 562 484 L 552 500 L 534 516 L 510 529 L 482 538 L 456 542
+              L 454 535 L 478 529 L 504 519 L 526 504 L 542 486
+              L 532 478 L 519 479 L 508 470 L 502 456
+              L 491 442 L 479 428 L 468 412 L 458 394
+              L 447 380 L 442 365 L 449 358 L 440 344
+              L 426 324 L 416 305 L 412 290
+              L 404 298 L 396 292 L 395 276 L 404 264 L 412 269
+              L 414 252 L 408 236 L 406 218 L 399 202
+              L 388 188 L 372 175 L 354 162 L 336 154
+              L 318 152 L 302 158 L 288 168 L 272 176
+              L 255 182 L 244 172 L 232 158 L 216 148
+              L 196 144 L 182 149 L 170 142 L 152 138
+              L 132 138 L 114 142 L 98 136 L 82 138
+              L 64 139 L 52 132 L 58 118 L 54 96
+              Z"
+              fill="url(#flStateGrad)"
+              stroke="#E56B25"
+              stroke-width="2.5"
+              stroke-linejoin="round"
+            />
+
+            <path d="M 518 358 C 530 356, 542 366, 540 380 C 538 394, 524 402, 512 394 C 502 386, 506 362, 518 358 Z"
+                  fill="#F5F3EA" fill-opacity="0.7" stroke="#E56B25" stroke-width="1.5"/>
+
+            <path d="M 410 198 C 370 140, 295 142, 268 188 C 312 216, 368 218, 410 198 Z"
+                  fill="url(#leafGrad1)" stroke="#002E19" stroke-width="2"/>
+            <path d="M 274 186 Q 340 184 405 198" stroke="#4CA87A" stroke-width="1.5" fill="none"/>
+
+            <path d="M 442 192 C 472 128, 548 124, 582 168 C 540 206, 486 210, 442 192 Z"
+                  fill="url(#leafGrad2)" stroke="#002E19" stroke-width="2"/>
+            <path d="M 445 190 Q 512 168 576 168" stroke="#4CA87A" stroke-width="1.5" fill="none"/>
+
+            <path d="M 426 185 C 412 118, 456 76, 496 102 C 488 148, 458 174, 426 185 Z"
+                  fill="url(#leafGrad1)" stroke="#002E19" stroke-width="2"/>
+            <path d="M 428 182 Q 458 136 492 104" stroke="#4CA87A" stroke-width="1.5" fill="none"/>
+
+            <path d="M 332 315 C 276 322, 245 362, 264 398 C 308 386, 336 352, 332 315 Z"
+                  fill="url(#leafGrad2)" stroke="#002E19" stroke-width="2"/>
+            <path d="M 328 318 Q 292 356 266 394" stroke="#4CA87A" stroke-width="1.5" fill="none"/>
+
+            <circle cx="486" cy="278" r="76" fill="url(#orangeRearGrad)" stroke="#7A1C00" stroke-width="2.5"/>
+            <g fill="#B32D00" opacity="0.35">
+              <circle cx="515" cy="245" r="2"/><circle cx="528" cy="260" r="1.8"/><circle cx="510" cy="272" r="2.2"/>
+              <circle cx="536" cy="282" r="2"/><circle cx="520" cy="302" r="2.2"/><circle cx="500" cy="318" r="1.8"/>
+              <circle cx="534" cy="312" r="1.6"/><circle cx="485" cy="332" r="2"/>
+            </g>
+
+            <circle cx="388" cy="272" r="86" fill="url(#orangeFrontGrad)" stroke="#7A1C00" stroke-width="2.5"/>
+            <path d="M 388 186 L 394 194 L 404 192 L 397 200 L 402 208 L 390 204 L 382 210 L 383 200 L 374 194 L 384 194 Z"
+                  fill="#004D29" stroke="#002B16" stroke-width="1.2"/>
+            <g fill="#FFF2B2" opacity="0.45">
+              <circle cx="352" cy="228" r="2.2"/><circle cx="338" cy="244" r="1.8"/><circle cx="366" cy="242" r="1.6"/>
+              <circle cx="332" cy="264" r="2"/><circle cx="350" cy="260" r="1.5"/>
+            </g>
+            <g fill="#9E2600" opacity="0.35">
+              <circle cx="418" cy="296" r="2.2"/><circle cx="434" cy="280" r="1.8"/><circle cx="404" cy="316" r="2"/>
+              <circle cx="426" cy="318" r="2.2"/><circle cx="382" cy="332" r="2"/><circle cx="442" cy="300" r="1.8"/>
+              <circle cx="358" cy="322" r="1.8"/><circle cx="412" cy="338" r="1.6"/>
+            </g>
+
+            <path d="M 392 195 C 352 174, 304 202, 298 242 C 338 244, 372 222, 392 195 Z"
+                  fill="url(#leafGrad2)" stroke="#002E19" stroke-width="2"/>
+            <path d="M 390 196 Q 344 216 302 240" stroke="#62C492" stroke-width="1.5" fill="none"/>
+
+            <g transform="translate(318, 174)">
+              <ellipse cx="0" cy="-26" rx="11" ry="24" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(72)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(144)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(216)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(288)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="7" fill="#FFB800"/>
+              <g stroke="#E08E00" stroke-width="1.5">
+                <line x1="0" y1="0" x2="-9" y2="-9"/><line x1="0" y1="0" x2="9" y2="-9"/>
+                <line x1="0" y1="0" x2="11" y2="3"/><line x1="0" y1="0" x2="0" y2="11"/>
+                <line x1="0" y1="0" x2="-11" y2="3"/>
+              </g>
+              <g fill="#FFD43B">
+                <circle cx="-9" cy="-9" r="2.5"/><circle cx="9" cy="-9" r="2.5"/>
+                <circle cx="11" cy="3" r="2.5"/><circle cx="0" cy="11" r="2.5"/>
+                <circle cx="-11" cy="3" r="2.5"/><circle cx="0" cy="0" r="3" fill="#007A48"/>
+              </g>
+            </g>
+
+            <g transform="translate(464, 178) scale(0.82) rotate(18)">
+              <ellipse cx="0" cy="-26" rx="11" ry="24" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(72)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(144)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(216)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <ellipse cx="0" cy="-26" rx="11" ry="24" transform="rotate(288)" fill="url(#petalGrad)" stroke="#8C8570" stroke-width="1.5"/>
+              <circle cx="0" cy="0" r="7" fill="#FFB800"/>
+              <g fill="#FFD43B">
+                <circle cx="-8" cy="-8" r="2.5"/><circle cx="8" cy="-8" r="2.5"/>
+                <circle cx="10" cy="3" r="2.5"/><circle cx="0" cy="10" r="2.5"/>
+                <circle cx="-10" cy="3" r="2.5"/>
+              </g>
+            </g>
+
+            <ellipse cx="272" cy="156" rx="6" ry="12" transform="rotate(-32 272 156)" fill="#FFFFFF" stroke="#005A34" stroke-width="1.5"/>
+            <ellipse cx="508" cy="152" rx="5.5" ry="11" transform="rotate(28 508 152)" fill="#FFFFFF" stroke="#005A34" stroke-width="1.5"/>
+          </svg>
+        </div>
+
+        <div class="weekday-header-grid">
+          <div class="weekday-cell"><span>Mon</span><span>01</span></div>
+          <div class="weekday-cell"><span>Tue</span><span>02</span></div>
+          <div class="weekday-cell"><span>Wed</span><span>03</span></div>
+          <div class="weekday-cell"><span>Thu</span><span>04</span></div>
+          <div class="weekday-cell"><span>Fri</span><span>05</span></div>
+          <div class="weekday-cell"><span>Sat</span><span>06</span></div>
+          <div class="weekday-cell"><span>Sun</span><span>07</span></div>
+        </div>
+        <div class="days-grid" id="calendarDaysGrid"></div>
+      </section>
+
+      <!-- ====================================================================
+           FOOTER: SUNSHINE STATE MOTTO + UTILITY RESET
+           ==================================================================== -->
+      <footer class="plate-bottom-bar">
+        <div class="footer-left">Click any date to apply or replace its stamp · Click matching stamp to clear</div>
+        <div class="sunshine-motto">SUNSHINE STATE</div>
+        <div class="footer-right">
+          <button type="button" class="swiss-btn" id="seedDemoBtn">Demo</button>
+          <button type="button" class="swiss-btn" id="clearMonthBtn">Clear</button>
+        </div>
+      </footer>
+
+    </div>
+
+    <!-- Bottom License Plate Bolt Slots -->
+    <div class="bolt-row" aria-hidden="true">
+      <span class="bolt-slot"></span>
+      <span class="bolt-slot"></span>
+    </div>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'fl_sunshine_6opt_single_stamp_v5';
+    const THEME_KEY = 'fl_sunshine_6opt_theme_v5';
+    const MONTH_NAMES = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+    /**
+     * 6 Single-Stamp Options (3 Solo + 3 60-Min Combination/Push):
+     */
+    const STAMP_CATALOG = {
+      std: {
+        id: 'std',
+        title: 'Standard Walk',
+        sub: 'Solo Session · 45 Min',
+        mins: 45,
+        isCombo: false,
+        hasStd: true,
+        hasExtra: false,
+        hasBkw: false,
+        hasBft: false,
+        css: 'stamp-std'
+      },
+      bkw: {
+        id: 'bkw',
+        title: 'Backwards Walk',
+        sub: 'Retro Gait · 15 Min',
+        mins: 15,
+        isCombo: false,
+        hasStd: false,
+        hasExtra: false,
+        hasBkw: true,
+        hasBft: false,
+        css: 'stamp-bkw'
+      },
+      bft: {
+        id: 'bft',
+        title: 'Barefoot Walk',
+        sub: 'Grounding · 15 Min',
+        mins: 15,
+        isCombo: false,
+        hasStd: false,
+        hasExtra: false,
+        hasBkw: false,
+        hasBft: true,
+        css: 'stamp-bft'
+      },
+      combo_std: {
+        id: 'combo_std',
+        title: 'Std + Extra Credit',
+        sub: '45m Std + 15m Push',
+        mins: 60,
+        isCombo: true,
+        hasStd: true,
+        hasExtra: true,
+        hasBkw: false,
+        hasBft: false,
+        css: 'stamp-combo_std'
+      },
+      combo_bkw: {
+        id: 'combo_bkw',
+        title: 'Std + Backwards',
+        sub: '45m Std + 15m Bkw',
+        mins: 60,
+        isCombo: true,
+        hasStd: true,
+        hasExtra: false,
+        hasBkw: true,
+        hasBft: false,
+        css: 'stamp-combo_bkw'
+      },
+      combo_bft: {
+        id: 'combo_bft',
+        title: 'Std + Barefoot',
+        sub: '45m Std + 15m Barefoot',
+        mins: 60,
+        isCombo: true,
+        hasStd: true,
+        hasExtra: false,
+        hasBkw: false,
+        hasBft: true,
+        css: 'stamp-combo_bft'
+      }
+    };
+
+    const now = new Date();
+    let currentYear = now.getFullYear();
+    let currentMonth = now.getMonth() + 1;
+    const todayISO = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    let activeStampId = 'std';
+    let logs = loadLogs();
+
+    function formatISO(y, m, d) {
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+
+    function loadLogs() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveLogs() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+      } catch {}
+    }
+
+    function seedMonth(y, m) {
+      const daysInMonth = new Date(y, m, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        delete logs[formatISO(y, m, d)];
+      }
+      const sample = [
+        { d: 1, stamp: 'combo_std' }, // 60m Std + 15m Extra Credit
+        { d: 2, stamp: 'bft'       }, // 15m Barefoot Solo
+        { d: 3, stamp: 'combo_bft' }, // 60m Std + Barefoot
+        { d: 4, stamp: 'std'       }, // 45m Standard Solo
+        { d: 6, stamp: 'combo_bkw' }, // 60m Std + Backwards
+        { d: 7, stamp: 'bkw'       }, // 15m Backwards Solo
+        { d: 8, stamp: 'combo_std' }, // 60m Std + 15m Extra Credit
+        { d: 10, stamp: 'std'      }, // 45m Standard Solo
+        { d: 12, stamp: 'combo_bkw'}, // 60m Std + Backwards
+        { d: 14, stamp: 'combo_bft'}, // 60m Std + Barefoot
+        { d: 16, stamp: 'combo_std'}  // 60m Std + 15m Extra Credit
+      ];
+      sample.forEach((s) => {
+        if (s.d <= daysInMonth) {
+          logs[formatISO(y, m, s.d)] = s.stamp;
+        }
+      });
+      saveLogs();
+    }
+
+    if (Object.keys(logs).length === 0) {
+      seedMonth(currentYear, currentMonth);
+    }
+
+    try {
+      if (localStorage.getItem(THEME_KEY) === 'night-plate') {
+        document.getElementById('plateRoot').setAttribute('data-theme', 'night-plate');
+      }
+    } catch {}
+
+    function toggleDayStamp(iso) {
+      const currentStampId = logs[iso];
+      if (currentStampId === activeStampId) {
+        delete logs[iso];
+      } else {
+        logs[iso] = activeStampId;
+      }
+      saveLogs();
+      render();
+    }
+
+    function render() {
+      const grid = document.getElementById('calendarDaysGrid');
+      grid.innerHTML = '';
+
+      const mShort = MONTH_NAMES[currentMonth - 1];
+      document.getElementById('currentMonthLabel').textContent = `${mShort} ${currentYear}`;
+      document.getElementById('decalMonthCode').textContent = `${mShort} ${String(currentYear).slice(-2)}`;
+
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+      const firstDow = new Date(currentYear, currentMonth - 1, 1).getDay();
+      const leadingEmpty = (firstDow === 0 ? 7 : firstDow) - 1;
+
+      for (let i = 0; i < leadingEmpty; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day-cell is-empty';
+        grid.appendChild(empty);
+      }
+
+      const activeSpec = STAMP_CATALOG[activeStampId];
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const iso = formatISO(currentYear, currentMonth, d);
+        const stampId = logs[iso];
+        const spec = stampId ? STAMP_CATALOG[stampId] : null;
+
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = `day-cell${iso === todayISO ? ' is-today' : ''}${spec && spec.isCombo ? ' is-combo-day' : ''}`;
+
+        const pad = String(d).padStart(2, '0');
+
+        if (spec) {
+          const minsBadge = spec.mins === 60 ? '60m Max' : `${spec.mins}m`;
+          cell.innerHTML = `
+            <div class="day-top-row">
+              <span class="day-num">${pad}</span>
+              <span class="day-mins-tag">${minsBadge}</span>
+            </div>
+            <div class="single-day-stamp ${spec.css}">
+              <div class="stamp-main-title">
+                <span>${spec.title}</span>
+                <span>✓</span>
+              </div>
+              <div class="stamp-sub-detail">${spec.sub}</div>
+            </div>
+          `;
+        } else {
+          cell.innerHTML = `
+            <div class="day-top-row">
+              <span class="day-num">${pad}</span>
+            </div>
+            <div class="hover-stamp-preview">+ ${activeSpec.title} (${activeSpec.mins}m)</div>
+          `;
+        }
+
+        cell.addEventListener('click', () => toggleDayStamp(iso));
+        grid.appendChild(cell);
+      }
+
+      const trailing = (7 - ((leadingEmpty + daysInMonth) % 7)) % 7;
+      for (let i = 0; i < trailing; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day-cell is-empty';
+        grid.appendChild(empty);
+      }
+
+      let activeDays = 0;
+      let soloCount = 0;
+      let comboCount = 0;
+      let stdCount = 0;
+      let extraCount = 0;
+      let bkwCount = 0;
+      let bftCount = 0;
+      let totalMinutes = 0;
+      let currentRun = 0;
+      let bestStreak = 0;
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const stampId = logs[formatISO(currentYear, currentMonth, d)];
+        const spec = stampId ? STAMP_CATALOG[stampId] : null;
+        if (spec) {
+          activeDays++;
+          totalMinutes += spec.mins;
+          if (spec.isCombo) {
+            comboCount++;
+          } else {
+            soloCount++;
+          }
+          if (spec.hasStd) stdCount++;
+          if (spec.hasExtra) extraCount++;
+          if (spec.hasBkw) bkwCount++;
+          if (spec.hasBft) bftCount++;
+
+          currentRun++;
+          if (currentRun > bestStreak) bestStreak = currentRun;
+        } else {
+          currentRun = 0;
+        }
+      }
+
+      const pct = Math.round((activeDays / daysInMonth) * 100);
+      const totalHours = (totalMinutes / 60).toFixed(1);
+      const estKcal = Math.round(totalMinutes * 8.0);
+
+      document.getElementById('statActiveDays').textContent = String(activeDays);
+      document.getElementById('statCompletionBadge').textContent = `${pct}% of Month`;
+      document.getElementById('statBestStreak').textContent = `Best Streak: ${bestStreak} Consecutive Days`;
+
+      document.getElementById('statComboCountBadge').textContent = `${comboCount} Combo (60m)`;
+      document.getElementById('statSoloVsCombo').textContent = `${soloCount} Solo · ${comboCount} Combo`;
+      document.getElementById('statModalitySplit').textContent = `${stdCount} Std · ${extraCount} Extra · ${bkwCount} Bkw · ${bftCount} Bft`;
+
+      document.getElementById('statTotalMinutes').textContent = String(totalMinutes);
+      document.getElementById('statHoursBadge').textContent = `${totalHours} Hrs`;
+      document.getElementById('statEstKcal').textContent = `~${estKcal.toLocaleString()} Est. kcal Burned`;
+
+      document.getElementById('plateSerialDynamic').textContent = String(totalMinutes).padStart(3, '0');
+      document.getElementById('decalSerialCode').textContent = `FL·${String(activeDays).padStart(2, '0')}`;
+    }
+
+    document.querySelectorAll('.stamp-option-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.stamp-option-btn').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        activeStampId = btn.dataset.stamp;
+        render();
+      });
+    });
+
+    document.getElementById('prevMonthBtn').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 1) { currentMonth = 12; currentYear--; }
+      render();
+    });
+
+    document.getElementById('nextMonthBtn').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+      render();
+    });
+
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      const root = document.getElementById('plateRoot');
+      if (root.getAttribute('data-theme') === 'night-plate') {
+        root.removeAttribute('data-theme');
+        try { localStorage.setItem(THEME_KEY, 'day-plate'); } catch {}
+      } else {
+        root.setAttribute('data-theme', 'night-plate');
+        try { localStorage.setItem(THEME_KEY, 'night-plate'); } catch {}
+      }
+    });
+
+    document.getElementById('seedDemoBtn').addEventListener('click', () => {
+      seedMonth(currentYear, currentMonth);
+      render();
+    });
+
+    document.getElementById('clearMonthBtn').addEventListener('click', () => {
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+      for (let d = 1; d <= daysInMonth; d++) {
+        delete logs[formatISO(currentYear, currentMonth, d)];
+      }
+      saveLogs();
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
