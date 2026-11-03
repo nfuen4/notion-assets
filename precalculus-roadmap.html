@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Precalculus (Blitzer 7e) — Gallery & Lifecycle Calendar</title>
+<style>
+  :root {
+    --bg: #0b0f19;
+    --surface: #111827;
+    --surface-2: #1e293b;
+    --border: #263044;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+  .title-block h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .title-block p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    background: #080c14;
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  .tab-btn {
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 7px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tab-btn.active {
+    background: var(--surface-2);
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .tab-btn:hover:not(.active) {
+    color: var(--text);
+  }
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .chip.active {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* GALLERY VIEW */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    border-color: #3b4c6b;
+  }
+  .card-banner {
+    width: 100%;
+    height: 175px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border);
+    background: #0d1322;
+  }
+  .card-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .cadence-box {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 0.78rem;
+  }
+  .cadence-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 0;
+  }
+  .cadence-row + .cadence-row {
+    border-top: 1px dashed #263044;
+    margin-top: 4px;
+    padding-top: 6px;
+  }
+  .sec-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    max-height: 190px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .sec-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 2px 0;
+  }
+  .sec-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  /* CALENDAR VIEW */
+  .calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .month-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 18px;
+  }
+  .month-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .month-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text);
+  }
+  .dow-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+  }
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .day-cell {
+    min-height: 62px;
+    background: #0d1322;
+    border: 1px solid #1c2539;
+    border-radius: 7px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.72rem;
+  }
+  .day-cell.empty {
+    background: transparent;
+    border-color: transparent;
+  }
+  .day-num {
+    font-weight: 700;
+    color: #94a3b8;
+    font-size: 0.72rem;
+  }
+  .day-pill {
+    font-size: 0.64rem;
+    font-weight: 700;
+    padding: 2px 4px;
+    border-radius: 4px;
+    line-height: 1.15;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .day-sub {
+    font-size: 0.6rem;
+    color: #cbd5e1;
+    opacity: 0.85;
+  }
+
+  /* LIFECYCLE GANTT VIEW */
+  .gantt-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    overflow-x: auto;
+  }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+    border-bottom: 1px solid #1e293b;
+    min-width: 780px;
+  }
+  .gantt-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+  .gantt-label span {
+    display: block;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+  .gantt-track {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    gap: 3px;
+    background: #0b0f19;
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .gantt-cell {
+    height: 26px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="title-block">
+    <h1>📐 Precalculus (Blitzer 7e) — Interactive Gallery & Lifecycle Calendar</h1>
+    <p>12 Chapters (Ch. P – Ch. 11) • 2-Week Phase Cadence (Week A: Introduce & Core | Week B: Complete, Review & Test) • Nov 2, 2026 – Apr 18, 2027</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchView('gallery', this)">🖼️ Chapter Contents Gallery</button>
+    <button class="tab-btn" onclick="switchView('calendar', this)">📅 6-Month Calendar View</button>
+    <button class="tab-btn" onclick="switchView('gantt', this)">📊 24-Week Lifecycle Timeline</button>
+  </div>
+</div>
+
+<!-- GALLERY VIEW -->
+<div id="view-gallery">
+  <div class="filter-bar" id="cluster-filters"></div>
+  <div class="gallery-grid" id="gallery-container"></div>
+</div>
+
+<!-- CALENDAR VIEW -->
+<div id="view-calendar" class="hidden">
+  <div class="calendar-controls">
+    <div class="filter-bar" id="month-filters" style="margin-bottom:0;"></div>
+    <div style="display:flex; gap:12px; font-size:0.78rem; color:var(--muted);">
+      <span>🟦 <strong>Week A (Days 1–7):</strong> Introduce & Core Sections → Mid-Chapter Check</span>
+      <span>🟩 <strong>Week B (Days 8–14):</strong> Complete Sections → Review & Chapter Test</span>
+    </div>
+  </div>
+  <div class="month-grid-container" id="calendar-container"></div>
+</div>
+
+<!-- GANTT VIEW -->
+<div id="view-gantt" class="hidden">
+  <div class="gantt-wrap" id="gantt-container"></div>
+</div>
+
+<script>
+const CHAPTERS = [
+  {
+    code: "P", order: 1, title: "Ch. P · Fundamental Concepts of Algebra",
+    phase: "Phase 01 (Weeks 1–2)", start: "2026-11-02", end: "2026-11-15",
+    w1: "Nov 2 – Nov 8", w2: "Nov 9 – Nov 15",
+    w1_focus: "P.1–P.5 + Mid-Chapter Check (p. 69)",
+    w2_focus: "P.6–P.9 + Review & Ch. P Test (p. 146)",
+    cluster: "I. Algebraic Foundations", pages: "pp. 1–148 (9 Sections)",
+    color: "#38bdf8",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-p.png",
+    sections: [
+      "P.1 Algebraic Expressions, Mathematical Models, and Real Numbers (p. 2)",
+      "P.2 Exponents and Scientific Notation (p. 20)",
+      "P.3 Radicals and Rational Exponents (p. 32)",
+      "P.4 Polynomials (p. 48)",
+      "P.5 Factoring Polynomials (p. 57) + Mid-Chapter Check (p. 69)",
+      "P.6 Rational Expressions (p. 70)",
+      "P.7 Equations (p. 88)",
+      "P.8 Models and Applications (p. 110)",
+      "P.9 Linear Inequalities and Absolute Value Inequalities (p. 126)"
+    ]
+  },
+  {
+    code: "1", order: 2, title: "Ch. 1 · Functions and Graphs",
+    phase: "Phase 02 (Weeks 3–4)", start: "2026-11-16", end: "2026-11-29",
+    w1: "Nov 16 – Nov 22", w2: "Nov 23 – Nov 29",
+    w1_focus: "1.1–1.5 + Mid-Chapter Check (p. 229)",
+    w2_focus: "1.6–1.10 + Review & Ch. 1 Test (p. 305)",
+    cluster: "II. Functions & Nonlinear Models", pages: "pp. 149–308 (10 Sections)",
+    color: "#34d399",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-1.png",
+    sections: [
+      "1.1 Graphs and Graphing Utilities (p. 150)",
+      "1.2 Basics of Functions and Their Graphs (p. 163)",
+      "1.3 More on Functions and Their Graphs (p. 182)",
+      "1.4 Linear Functions and Slope (p. 202)",
+      "1.5 More on Slope (p. 218) + Mid-Chapter Check (p. 229)",
+      "1.6 Transformations of Functions (p. 230)",
+      "1.7 Combinations of Functions; Composite Functions (p. 246)",
+      "1.8 Inverse Functions (p. 261)",
+      "1.9 Distance and Midpoint Formulas; Circles (p. 272)",
+      "1.10 Modeling with Functions (p. 282)"
+    ]
+  },
+  {
+    code: "2", order: 3, title: "Ch. 2 · Polynomial and Rational Functions",
+    phase: "Phase 03 (Weeks 5–6)", start: "2026-11-30", end: "2026-12-13",
+    w1: "Nov 30 – Dec 6", w2: "Dec 7 – Dec 13",
+    w1_focus: "2.1–2.5 + Mid-Chapter Check (p. 382)",
+    w2_focus: "2.6–2.8 + Ch. 2 Test & Cum. Review (p. 436)",
+    cluster: "II. Functions & Nonlinear Models", pages: "pp. 309–438 (8 Sections)",
+    color: "#a78bfa",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-2.png",
+    sections: [
+      "2.1 Complex Numbers (p. 310)",
+      "2.2 Quadratic Functions (Vertex Form) (p. 319)",
+      "2.3 Polynomial Functions and Their Graphs (p. 337)",
+      "2.4 Dividing Polynomials; Remainder & Factor Thms (p. 355)",
+      "2.5 Zeros of Polynomial Functions (p. 368) + Mid-Check (p. 382)",
+      "2.6 Rational Functions and Their Graphs (p. 384)",
+      "2.7 Polynomial and Rational Inequalities (p. 406)",
+      "2.8 Modeling Using Variation (p. 419)"
+    ]
+  },
+  {
+    code: "3", order: 4, title: "Ch. 3 · Exponential and Logarithmic Functions",
+    phase: "Phase 04 (Weeks 7–8)", start: "2026-12-14", end: "2026-12-27",
+    w1: "Dec 14 – Dec 20", w2: "Dec 21 – Dec 27",
+    w1_focus: "3.1–3.3 + Mid-Chapter Check (p. 479)",
+    w2_focus: "3.4–3.5 + Ch. 3 Test & Cum. Review (p. 517)",
+    cluster: "II. Functions & Nonlinear Models", pages: "pp. 439–520 (5 Sections)",
+    color: "#fb923c",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-3.png",
+    sections: [
+      "3.1 Exponential Functions (p. 440)",
+      "3.2 Logarithmic Functions (p. 454)",
+      "3.3 Properties of Logarithms (p. 469) + Mid-Check (p. 479)",
+      "3.4 Exponential and Logarithmic Equations (p. 480)",
+      "3.5 Exponential Growth and Decay; Modeling Data (p. 495)"
+    ]
+  },
+  {
+    code: "4", order: 5, title: "Ch. 4 · Trigonometric Functions",
+    phase: "Phase 05 (Weeks 9–10)", start: "2026-12-28", end: "2027-01-10",
+    w1: "Dec 28 – Jan 3", w2: "Jan 4 – Jan 10",
+    w1_focus: "4.1–4.4 + Mid-Chapter Check (p. 581)",
+    w2_focus: "4.5–4.8 + Ch. 4 Test & Cum. Review (p. 654)",
+    cluster: "III. Trigonometry & Analytic Trig", pages: "pp. 521–656 (8 Sections)",
+    color: "#f472b6",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-4.png",
+    sections: [
+      "4.1 Angles and Radian Measure (p. 522)",
+      "4.2 Trigonometric Functions: The Unit Circle (p. 539)",
+      "4.3 Right Triangle Trigonometry (p. 555)",
+      "4.4 Trigonometric Functions of Any Angle (p. 568) + Mid-Check (p. 581)",
+      "4.5 Graphs of Sine and Cosine Functions (p. 583)",
+      "4.6 Graphs of Other Trigonometric Functions (p. 604)",
+      "4.7 Inverse Trigonometric Functions (p. 618)",
+      "4.8 Applications of Trigonometric Functions (p. 636)"
+    ]
+  },
+  {
+    code: "5", order: 6, title: "Ch. 5 · Analytic Trigonometry",
+    phase: "Phase 06 (Weeks 11–12)", start: "2027-01-11", end: "2027-01-24",
+    w1: "Jan 11 – Jan 17", w2: "Jan 18 – Jan 24",
+    w1_focus: "5.1–5.3 + Mid-Chapter Check (p. 692)",
+    w2_focus: "5.4–5.5 + Ch. 5 Test & Cum. Review (p. 720)",
+    cluster: "III. Trigonometry & Analytic Trig", pages: "pp. 657–722 (5 Sections)",
+    color: "#e879f9",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-5.png",
+    sections: [
+      "5.1 Verifying Trigonometric Identities (p. 658)",
+      "5.2 Sum and Difference Formulas (p. 670)",
+      "5.3 Double-Angle, Power-Reducing & Half-Angle Formulas (p. 681) + Mid-Check",
+      "5.4 Product-to-Sum and Sum-to-Product Formulas (p. 693)",
+      "5.5 Trigonometric Equations (p. 702)"
+    ]
+  },
+  {
+    code: "6", order: 7, title: "Ch. 6 · Additional Topics in Trigonometry",
+    phase: "Phase 07 (Weeks 13–14)", start: "2027-01-25", end: "2027-02-07",
+    w1: "Jan 25 – Jan 31", w2: "Feb 1 – Feb 7",
+    w1_focus: "6.1–6.4 + Mid-Chapter Check (p. 768)",
+    w2_focus: "6.5–6.7 + Ch. 6 Test & Cum. Review (p. 812)",
+    cluster: "III. Trigonometry & Analytic Trig", pages: "pp. 723–814 (7 Sections)",
+    color: "#2dd4bf",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-6.png",
+    sections: [
+      "6.1 The Law of Sines (p. 724)",
+      "6.2 The Law of Cosines (p. 736)",
+      "6.3 Polar Coordinates (p. 745)",
+      "6.4 Graphs of Polar Equations (p. 757) + Mid-Check (p. 768)",
+      "6.5 Complex Numbers in Polar Form; DeMoivre's Theorem (p. 769)",
+      "6.6 Vectors (p. 782)",
+      "6.7 The Dot Product (p. 797)"
+    ]
+  },
+  {
+    code: "7", order: 8, title: "Ch. 7 · Systems of Equations and Inequalities",
+    phase: "Phase 08 (Weeks 15–16)", start: "2027-02-08", end: "2027-02-21",
+    w1: "Feb 8 – Feb 14", w2: "Feb 15 – Feb 21",
+    w1_focus: "7.1–7.4 + Mid-Chapter Check (p. 865)",
+    w2_focus: "7.5–7.6 + Ch. 7 Test & Cum. Review (p. 891)",
+    cluster: "IV. Linear Systems & Matrices", pages: "pp. 815–892 (6 Sections)",
+    color: "#facc15",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-7.png",
+    sections: [
+      "7.1 Systems of Linear Equations in Two Variables (p. 816)",
+      "7.2 Systems of Linear Equations in Three Variables (p. 836)",
+      "7.3 Partial Fractions (p. 844)",
+      "7.4 Systems of Nonlinear Equations in Two Variables (p. 855) + Mid-Check",
+      "7.5 Systems of Inequalities (p. 866)",
+      "7.6 Linear Programming (p. 879)"
+    ]
+  },
+  {
+    code: "8", order: 9, title: "Ch. 8 · Matrices and Determinants",
+    phase: "Phase 09 (Weeks 17–18)", start: "2027-02-22", end: "2027-03-07",
+    w1: "Feb 22 – Feb 28", w2: "Mar 1 – Mar 7",
+    w1_focus: "8.1–8.3 + Mid-Chapter Check (p. 932)",
+    w2_focus: "8.4–8.5 + Ch. 8 Test & Cum. Review (p. 964)",
+    cluster: "IV. Linear Systems & Matrices", pages: "pp. 893–966 (5 Sections)",
+    color: "#60a5fa",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-8.png",
+    sections: [
+      "8.1 Matrix Solutions to Linear Systems (p. 894)",
+      "8.2 Inconsistent and Dependent Systems and Their Applications (p. 908)",
+      "8.3 Matrix Operations and Their Applications (p. 917) + Mid-Check (p. 932)",
+      "8.4 Multiplicative Inverses of Matrices and Matrix Equations (p. 933)",
+      "8.5 Determinants and Cramer's Rule (p. 947)"
+    ]
+  },
+  {
+    code: "9", order: 10, title: "Ch. 9 · Conic Sections and Analytic Geometry",
+    phase: "Phase 10 (Weeks 19–20)", start: "2027-03-08", end: "2027-03-21",
+    w1: "Mar 8 – Mar 14", w2: "Mar 15 – Mar 21",
+    w1_focus: "9.1–9.3 + Mid-Chapter Check (p. 1012)",
+    w2_focus: "9.4–9.6 + Ch. 9 Test & Cum. Review (p. 1050)",
+    cluster: "V. Analytic Geometry & Discrete Math", pages: "pp. 967–1052 (6 Sections)",
+    color: "#f87171",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-9.png",
+    sections: [
+      "9.1 The Ellipse (p. 968)",
+      "9.2 The Hyperbola (p. 983)",
+      "9.3 The Parabola (p. 998) + Mid-Chapter Check (p. 1012)",
+      "9.4 Rotation of Axes (p. 1014)",
+      "9.5 Parametric Equations (p. 1025)",
+      "9.6 Conic Sections in Polar Coordinates (p. 1035)"
+    ]
+  },
+  {
+    code: "10", order: 11, title: "Ch. 10 · Sequences, Induction, and Probability",
+    phase: "Phase 11 (Weeks 21–22)", start: "2027-03-22", end: "2027-04-04",
+    w1: "Mar 22 – Mar 28", w2: "Mar 29 – Apr 4",
+    w1_focus: "10.1–10.3 + Mid-Chapter Check (p. 1091)",
+    w2_focus: "10.4–10.7 + Ch. 10 Test & Cum. Review (p. 1140)",
+    cluster: "V. Analytic Geometry & Discrete Math", pages: "pp. 1053–1142 (7 Sections)",
+    color: "#a3e635",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-10.png",
+    sections: [
+      "10.1 Sequences and Summation Notation (p. 1054)",
+      "10.2 Arithmetic Sequences (p. 1065)",
+      "10.3 Geometric Sequences and Series (p. 1076) + Mid-Check (p. 1091)",
+      "10.4 Mathematical Induction (p. 1092)",
+      "10.5 The Binomial Theorem (p. 1101)",
+      "10.6 Counting Principles, Permutations, and Combinations (p. 1109)",
+      "10.7 Probability (p. 1120)"
+    ]
+  },
+  {
+    code: "11", order: 12, title: "Ch. 11 · Introduction to Calculus",
+    phase: "Phase 12 (Weeks 23–24)", start: "2027-04-05", end: "2027-04-18",
+    w1: "Apr 5 – Apr 11", w2: "Apr 12 – Apr 18",
+    w1_focus: "11.1–11.3 + Mid-Chapter Check (p. 1177)",
+    w2_focus: "11.4 + Appendices A/B + Final Capstone Test (p. 1194)",
+    cluster: "VI. Calculus Bridge", pages: "pp. 1143–1210 (4 Sections + Appendices)",
+    color: "#38bdf8",
+    img: "https://raw.githubusercontent.com/nfuen4/notion-assets/main/precalc-ch-11.png",
+    sections: [
+      "11.1 Finding Limits Using Tables and Graphs (p. 1144)",
+      "11.2 Finding Limits Using Properties of Limits (p. 1156)",
+      "11.3 Limits and Continuity (p. 1170) + Mid-Check (p. 1177)",
+      "11.4 Introduction to Derivatives (p. 1178)",
+      "Appendix A & B: Selected Proofs & Transition to Calculus (p. 1197)"
+    ]
+  }
+];
+
+let activeCluster = "ALL";
+let activeMonth = "ALL";
+
+function renderGallery() {
+  const clusters = ["ALL", ...new Set(CHAPTERS.map(c => c.cluster))];
+  const filterEl = document.getElementById("cluster-filters");
+  filterEl.innerHTML = clusters.map(cl => `
+    <button class="chip ${activeCluster === cl ? 'active' : ''}" onclick="setCluster('${cl}')">
+      ${cl === 'ALL' ? 'All 12 Chapters (80 Sections)' : cl}
+    </button>
+  `).join("");
+
+  const container = document.getElementById("gallery-container");
+  const filtered = activeCluster === "ALL" ? CHAPTERS : CHAPTERS.filter(c => c.cluster === activeCluster);
+  container.innerHTML = filtered.map(c => `
+    <div class="card">
+      <img class="card-banner" src="${c.img}" alt="${c.title}" loading="lazy" />
+      <div class="card-body">
+        <div class="badges">
+          <span class="badge" style="background:${c.color}22; color:${c.color}; border:1px solid ${c.color}55;">${c.phase}</span>
+          <span class="badge" style="background:#1e293b; color:#cbd5e1;">${c.start} → ${c.end}</span>
+          <span class="badge" style="background:#0f172a; color:#94a3b8;">${c.pages}</span>
+        </div>
+        <div class="card-title">${c.title}</div>
+        <div class="cadence-box">
+          <div class="cadence-row">
+            <span style="color:#38bdf8; font-weight:700;">🟦 Week A (${c.w1}):</span>
+            <span style="color:#e2e8f0; text-align:right;">${c.w1_focus}</span>
+          </div>
+          <div class="cadence-row">
+            <span style="color:#34d399; font-weight:700;">🟩 Week B (${c.w2}):</span>
+            <span style="color:#e2e8f0; text-align:right;">${c.w2_focus}</span>
+          </div>
+        </div>
+        <ul class="sec-list">
+          ${c.sections.map(s => `
+            <li>
+              <span class="sec-dot" style="background:${c.color}"></span>
+              <span>${s}</span>
+            </li>
+          `).join("")}
+        </ul>
+      </div>
+    </div>
+  `).join("");
+}
+
+function setCluster(cl) {
+  activeCluster = cl;
+  renderGallery();
+}
+
+const MONTHS = [
+  { key: "2026-11", label: "November 2026", year: 2026, month: 10 },
+  { key: "2026-12", label: "December 2026", year: 2026, month: 11 },
+  { key: "2027-01", label: "January 2027", year: 2027, month: 0 },
+  { key: "2027-02", label: "February 2027", year: 2027, month: 1 },
+  { key: "2027-03", label: "March 2027", year: 2027, month: 2 },
+  { key: "2027-04", label: "April 2027", year: 2027, month: 3 }
+];
+
+function getPhaseForDate(dateStr) {
+  for (const ch of CHAPTERS) {
+    if (dateStr >= ch.start && dateStr <= ch.end) {
+      const d0 = new Date(ch.start + "T00:00:00");
+      const dCur = new Date(dateStr + "T00:00:00");
+      const diffDays = Math.round((dCur - d0) / (1000 * 60 * 60 * 24));
+      const isWeekA = diffDays < 7;
+      return {
+        ch,
+        dayIndex: diffDays + 1,
+        isWeekA,
+        subLabel: isWeekA ? `Wk A · Intro` : (diffDays === 13 ? `🏆 Ch.${ch.code} Test` : `Wk B · Review`)
+      };
+    }
+  }
+  return null;
+}
+
+function renderCalendar() {
+  const mFilter = document.getElementById("month-filters");
+  mFilter.innerHTML = [
+    `<button class="chip ${activeMonth === 'ALL' ? 'active' : ''}" onclick="setMonth('ALL')">All 6 Months (Nov 2026 – Apr 2027)</button>`,
+    ...MONTHS.map(m => `<button class="chip ${activeMonth === m.key ? 'active' : ''}" onclick="setMonth('${m.key}')">${m.label}</button>`)
+  ].join("");
+
+  const container = document.getElementById("calendar-container");
+  const visibleMonths = activeMonth === "ALL" ? MONTHS : MONTHS.filter(m => m.key === activeMonth);
+
+  container.innerHTML = visibleMonths.map(m => {
+    const firstDay = new Date(m.year, m.month, 1).getDay(); // 0=Sun
+    const daysInMonth = new Date(m.year, m.month + 1, 0).getDate();
+    let cells = "";
+    for (let i = 0; i < firstDay; i++) {
+      cells += `<div class="day-cell empty"></div>`;
+    }
+    for (let d = 1; d <= daysInMonth; d++) {
+      const mm = String(m.month + 1).padStart(2, "0");
+      const dd = String(d).padStart(2, "0");
+      const iso = `${m.year}-${mm}-${dd}`;
+      const info = getPhaseForDate(iso);
+      if (info) {
+        const bg = info.isWeekA ? `${info.ch.color}25` : `${info.ch.color}40`;
+        const border = info.ch.color;
+        cells += `
+          <div class="day-cell" style="border-color:${border}66; background:${bg};" title="${info.ch.title} (${info.subLabel})">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="day-num" style="color:#f8fafc;">${d}</span>
+              <span style="font-size:0.6rem; color:${info.ch.color}; font-weight:700;">D${info.dayIndex}</span>
+            </div>
+            <div class="day-pill" style="background:${info.ch.color}; color:#0b0f19;">Ch. ${info.ch.code}</div>
+            <div class="day-sub">${info.subLabel}</div>
+          </div>
+        `;
+      } else {
+        cells += `
+          <div class="day-cell">
+            <span class="day-num">${d}</span>
+          </div>
+        `;
+      }
+    }
+    return `
+      <div class="month-card">
+        <div class="month-title">
+          <span>🗓️ ${m.label}</span>
+          <span style="font-size:0.75rem; color:var(--muted);">2-Week Cadence Grid</span>
+        </div>
+        <div class="dow-header">
+          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+        </div>
+        <div class="days-grid">${cells}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function setMonth(mKey) {
+  activeMonth = mKey;
+  renderCalendar();
+}
+
+function renderGantt() {
+  const container = document.getElementById("gantt-container");
+  let headerCells = "";
+  for (let w = 1; w <= 24; w++) {
+    headerCells += `<div style="text-align:center; font-size:0.68rem; color:#94a3b8; font-weight:700;">W${w}</div>`;
+  }
+  let html = `
+    <div class="gantt-row" style="border-bottom:2px solid #334155; padding-bottom:10px;">
+      <div class="gantt-label" style="color:#38bdf8;">Chapter & Phase Window<span>Nov 2, 2026 – Apr 18, 2027 (24 Weeks)</span></div>
+      <div class="gantt-track" style="background:transparent; border:none;">${headerCells}</div>
+    </div>
+  `;
+  CHAPTERS.forEach((ch, idx) => {
+    const wA = idx * 2 + 1;
+    const wB = idx * 2 + 2;
+    let trackCells = "";
+    for (let w = 1; w <= 24; w++) {
+      if (w === wA) {
+        trackCells += `<div class="gantt-cell" style="background:${ch.color}; color:#0b0f19;" title="Week ${w}: Introduce & Core">Intro</div>`;
+      } else if (w === wB) {
+        trackCells += `<div class="gantt-cell" style="background:${ch.color}99; color:#f8fafc; border:1px solid ${ch.color};" title="Week ${w}: Complete, Review & Test">Rev</div>`;
+      } else {
+        trackCells += `<div class="gantt-cell" style="background:#111827;"></div>`;
+      }
+    }
+    html += `
+      <div class="gantt-row">
+        <div class="gantt-label">
+          ${ch.title}
+          <span>${ch.start} → ${ch.end} (${ch.pages})</span>
+        </div>
+        <div class="gantt-track">${trackCells}</div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
+}
+
+function switchView(view, btn) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("view-gallery").classList.toggle("hidden", view !== "gallery");
+  document.getElementById("view-calendar").classList.toggle("hidden", view !== "calendar");
+  document.getElementById("view-gantt").classList.toggle("hidden", view !== "gantt");
+}
+
+renderGallery();
+renderCalendar();
+renderGantt();
+</script>
+</body>
+</html>
