@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Vocabulary — Week 02: Model Validation &amp; Clustering</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      /* ISYE 6501 Editorial Infographic Palette */
+      --bg-cream: #faf6ee;
+      --bg-card: #fffdf9;
+      --bg-sticky-note: #fdf6e2;
+      --bg-mint-soft: #e4f1ed;
+      --bg-peach-soft: #f9e3dc;
+      --bg-amber-soft: #fbeed7;
+
+      --ink-deep: #16302f;
+      --ink-body: #2c3531;
+      --ink-muted: #5b6661;
+
+      --teal: #3a716a;
+      --teal-dark: #2c5953;
+      --teal-border: #c5dad4;
+
+      --terracotta: #d86b56;
+      --terracotta-dark: #b9513e;
+      --terracotta-border: #ecc3b9;
+
+      --amber: #e6a24c;
+      --amber-dark: #b67521;
+      --amber-border: #edd7b2;
+
+      --border-warm: #dcd6c8;
+      --shadow-soft: 0 8px 24px -8px rgba(22, 48, 47, 0.08), 0 2px 6px -2px rgba(22, 48, 47, 0.04);
+
+      --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+      --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: clamp(1rem, 2.5vw, 2rem);
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(circle at 12% 10%, rgba(216, 107, 86, 0.06) 0%, transparent 32%),
+        radial-gradient(circle at 88% 12%, rgba(58, 113, 106, 0.07) 0%, transparent 34%),
+        radial-gradient(circle at 50% 92%, rgba(230, 162, 76, 0.07) 0%, transparent 40%);
+      color: var(--ink-body);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      line-height: 1.55;
+    }
+
+    .sr-only {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .page-shell {
+      max-inline-size: 1120px;
+      margin-inline: auto;
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    /* Editorial Header matching Infographic */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 1rem 1.5rem;
+      padding-block-end: 0.25rem;
+    }
+
+    .hero-main {
+      display: grid;
+      justify-items: start;
+      gap: 0.55rem;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.28rem 0.78rem;
+      border-radius: var(--radius-pill);
+      background: var(--bg-mint-soft);
+      border: 1px solid var(--teal-border);
+      color: var(--teal-dark);
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .hero-title-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 1.2rem + 2.2vw, 2.55rem);
+      line-height: 1.12;
+      color: var(--ink-deep);
+      letter-spacing: -0.015em;
+    }
+
+    .title-underline {
+      display: block;
+      inline-size: min(260px, 85%);
+      block-size: 10px;
+      margin-block-start: 0.15rem;
+    }
+
+    .subtitle-pill {
+      margin: 0;
+      padding: 0.42rem 1rem;
+      border-radius: var(--radius-pill);
+      background: var(--bg-peach-soft);
+      color: var(--ink-deep);
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    /* Sticky Note Callout (matches top-right Key Takeaway card) */
+    .takeaway-note {
+      background: var(--bg-sticky-note);
+      border: 1.5px solid var(--amber-border);
+      border-radius: 14px;
+      padding: 0.75rem 1rem;
+      box-shadow: 0 6px 14px -8px rgba(182, 117, 33, 0.25);
+      max-inline-size: 280px;
+      transform: rotate(1deg);
+    }
+
+    .takeaway-note h2 {
+      margin: 0 0 0.35rem;
+      font-family: var(--font-display);
+      font-size: 0.96rem;
+      color: var(--ink-deep);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .takeaway-note ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.24rem;
+      font-size: 0.8rem;
+      color: var(--ink-body);
+      font-weight: 500;
+    }
+
+    .takeaway-note li {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .check-box {
+      inline-size: 14px;
+      block-size: 14px;
+      flex: none;
+      color: var(--amber-dark);
+    }
+
+    /* Controls Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: safe center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 0.6rem 0.85rem;
+      box-shadow: 0 2px 8px -4px rgba(22, 48, 47, 0.06);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .filter-btn,
+    .study-btn {
+      appearance: none;
+      border: 1.5px solid var(--border-warm);
+      background: var(--bg-cream);
+      color: var(--ink-deep);
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.38rem 0.82rem;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+    }
+
+    .filter-btn:hover,
+    .study-btn:hover {
+      background: var(--bg-mint-soft);
+      border-color: var(--teal-border);
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #ffffff;
+    }
+
+    .study-btn[aria-pressed="true"] {
+      background: var(--terracotta);
+      border-color: var(--terracotta);
+      color: #ffffff;
+    }
+
+    .filter-btn:focus-visible,
+    .study-btn:focus-visible,
+    .table-wrapper:focus-visible,
+    tbody tr:focus-visible {
+      outline: 2.5px solid var(--terracotta);
+      outline-offset: 2px;
+    }
+
+    /* Responsive Table Card & Container Query */
+    .table-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--teal-border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      overflow: clip;
+    }
+
+    .table-wrapper {
+      overflow: auto;
+      max-inline-size: 100%;
+      max-block-size: min(720px, 82dvh);
+      container-type: inline-size;
+      container-name: vocab-table;
+      scrollbar-gutter: stable;
+    }
+
+    table {
+      inline-size: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: start;
+      --label-1: "Term";
+      --label-2: "Plain-English Definition";
+      --label-3: "Everyday Analogy";
+    }
+
+    thead {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 2;
+    }
+
+    thead th {
+      background: var(--teal);
+      color: #ffffff;
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.9rem 1.15rem;
+      border-block-end: 2px solid var(--teal-dark);
+      white-space: nowrap;
+    }
+
+    thead th:nth-child(1) {
+      inline-size: 27%;
+    }
+    thead th:nth-child(2) {
+      inline-size: 42%;
+    }
+    thead th:nth-child(3) {
+      inline-size: 31%;
+    }
+
+    tbody tr {
+      transition: background-color 150ms ease;
+    }
+
+    tbody tr[hidden] {
+      display: none;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(250, 246, 238, 0.55);
+    }
+
+    tbody tr:hover {
+      background: #f1f7f5;
+    }
+
+    tbody th,
+    tbody td {
+      padding: 1rem 1.15rem;
+      vertical-align: top;
+      border-block-end: 1px solid var(--border-warm);
+    }
+
+    tbody tr:last-child th,
+    tbody tr:last-child td {
+      border-block-end: none;
+    }
+
+    /* Sticky Row Header on horizontal scroll */
+    tbody th {
+      position: sticky;
+      inset-inline-start: 0;
+      z-index: 1;
+      background: var(--bg-card);
+      font-weight: 700;
+      color: var(--ink-deep);
+      border-inline-end: 1px solid rgba(220, 214, 200, 0.55);
+    }
+
+    tbody tr:nth-child(even) th {
+      background: #fcfaf4;
+    }
+
+    tbody tr:hover th {
+      background: #f1f7f5;
+    }
+
+    /* Term Cell Layout */
+    .term-cell {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .icon-badge {
+      inline-size: 40px;
+      block-size: 40px;
+      flex: none;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      border: 1.5px solid transparent;
+    }
+
+    .icon-badge.teal {
+      background: var(--bg-mint-soft);
+      border-color: var(--teal-border);
+      color: var(--teal-dark);
+    }
+
+    .icon-badge.terracotta {
+      background: var(--bg-peach-soft);
+      border-color: var(--terracotta-border);
+      color: var(--terracotta-dark);
+    }
+
+    .icon-badge.amber {
+      background: var(--bg-amber-soft);
+      border-color: var(--amber-border);
+      color: var(--amber-dark);
+    }
+
+    .icon-badge svg {
+      inline-size: 22px;
+      block-size: 22px;
+      display: block;
+    }
+
+    .term-meta {
+      display: grid;
+      gap: 0.28rem;
+    }
+
+    .term-name {
+      font-family: var(--font-display);
+      font-size: 1.03rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink-deep);
+    }
+
+    .cat-pill {
+      justify-self: start;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      padding: 0.14rem 0.52rem;
+      border-radius: var(--radius-pill);
+    }
+
+    .cat-pill.signal {
+      background: var(--bg-peach-soft);
+      color: var(--terracotta-dark);
+    }
+
+    .cat-pill.splits {
+      background: var(--bg-mint-soft);
+      color: var(--teal-dark);
+    }
+
+    .cat-pill.clustering {
+      background: var(--bg-amber-soft);
+      color: var(--amber-dark);
+    }
+
+    /* Definition Cell */
+    .def-wrap {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .lead-tag {
+      display: inline-block;
+      justify-self: start;
+      font-style: italic;
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--terracotta-dark);
+      background: var(--bg-peach-soft);
+      padding: 0.14rem 0.58rem;
+      border-radius: 8px;
+    }
+
+    .lead-tag.teal {
+      color: var(--teal-dark);
+      background: var(--bg-mint-soft);
+    }
+
+    .lead-tag.amber {
+      color: var(--amber-dark);
+      background: var(--bg-amber-soft);
+    }
+
+    .def-text {
+      margin: 0;
+      color: var(--ink-body);
+    }
+
+    .def-text strong {
+      color: var(--ink-deep);
+    }
+
+    /* Example Cell */
+    .example-box {
+      background: var(--bg-cream);
+      border: 1px solid var(--border-warm);
+      border-radius: 10px;
+      padding: 0.6rem 0.78rem;
+      font-size: 0.9rem;
+      color: var(--ink-body);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.82em;
+      font-weight: 600;
+      background: var(--bg-mint-soft);
+      color: var(--teal-dark);
+      border: 1px solid var(--teal-border);
+      padding: 0.08rem 0.38rem;
+      border-radius: 6px;
+    }
+
+    /* Study Mode (Blur/Reveal Definitions) */
+    .is-study-mode .def-wrap {
+      filter: blur(5px);
+      user-select: none;
+      transition: filter 160ms ease;
+    }
+
+    .is-study-mode tr.revealed .def-wrap,
+    .is-study-mode tr:hover .def-wrap {
+      filter: none;
+      user-select: auto;
+    }
+
+    .study-hint {
+      display: none;
+      font-size: 0.76rem;
+      color: var(--terracotta-dark);
+      font-weight: 600;
+      margin-block-start: 0.2rem;
+    }
+
+    .is-study-mode .study-hint {
+      display: block;
+    }
+
+    .is-study-mode tr {
+      cursor: pointer;
+    }
+
+    /* Footer */
+    .card-footer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      padding: 0.65rem 1.15rem;
+      background: var(--bg-sticky-note);
+      border-block-start: 1.5px solid var(--amber-border);
+      font-size: 0.8rem;
+      color: var(--ink-muted);
+      font-weight: 500;
+    }
+
+    /* Container Query: Stacked Infographic Cards on Narrow Embeds */
+    @container vocab-table (width < 640px) {
+      .table-card {
+        border: none;
+        background: transparent;
+        box-shadow: none;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tbody {
+        display: grid;
+        gap: 1rem;
+      }
+
+      tbody tr {
+        background: var(--bg-card) !important;
+        border: 1.5px solid var(--teal-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-soft);
+        overflow: clip;
+      }
+
+      tbody th {
+        position: sticky;
+        inset-block-start: 0;
+        z-index: 2;
+        background: var(--bg-mint-soft) !important;
+        border-inline-end: none;
+        border-block-end: 1.5px solid var(--teal-border);
+        padding: 0.85rem 1rem;
+      }
+
+      tbody td {
+        padding: 0.85rem 1rem;
+        border-block-end: 1px solid var(--border-warm);
+      }
+
+      tbody td:last-child {
+        border-block-end: none;
+      }
+
+      tbody td:nth-child(2)::before {
+        content: var(--label-2);
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--teal-dark);
+        margin-block-end: 0.35rem;
+      }
+
+      tbody td:nth-child(3)::before {
+        content: var(--label-3);
+        display: block;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--terracotta-dark);
+        margin-block-end: 0.35rem;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+      .takeaway-note {
+        max-inline-size: none;
+        transform: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page-shell">
+    <!-- Editorial Header matching Week 02 Infographic Aesthetic -->
+    <header class="hero">
+      <div class="hero-main">
+        <span class="eyebrow">ISYE 6501 · Week 02 · Level 1 (Remember)</span>
+        <div class="hero-title-wrap">
+          <h1 id="vocab-title">Core Vocabulary</h1>
+          <svg class="title-underline" viewBox="0 0 260 12" fill="none" aria-hidden="true">
+            <path d="M3 8.5C68 3.2 175 2.5 257 7.2" stroke="#ECA952" stroke-width="4.2" stroke-linecap="round" />
+          </svg>
+        </div>
+        <p class="subtitle-pill">Signal vs. noise, honest 3-way validation splits, cross-validation, and unsupervised clustering.</p>
+      </div>
+
+      <aside class="takeaway-note" aria-label="Key Takeaway">
+        <h2>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B67521" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18h6" />
+            <path d="M10 22h4" />
+            <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14" />
+          </svg>
+          Quick Study Anchor
+        </h2>
+        <ul>
+          <li>
+            <svg class="check-box" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="13" height="13" rx="3" />
+              <path d="M4.5 8.2L7 10.6L11.5 5.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Real Signal vs. Random Noise
+          </li>
+          <li>
+            <svg class="check-box" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="13" height="13" rx="3" />
+              <path d="M4.5 8.2L7 10.6L11.5 5.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Train → Validate → Test (Once!)
+          </li>
+          <li>
+            <svg class="check-box" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="13" height="13" rx="3" />
+              <path d="M4.5 8.2L7 10.6L11.5 5.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Clustering = Grouping Without Labels
+          </li>
+        </ul>
+      </aside>
+    </header>
+
+    <!-- Interactive Filter & Study Controls -->
+    <div class="toolbar" role="toolbar" aria-label="Vocabulary filters and study mode">
+      <div class="filter-group">
+        <button type="button" class="filter-btn" data-filter="all" aria-pressed="true">All Terms (9)</button>
+        <button type="button" class="filter-btn" data-filter="signal" aria-pressed="false">Signal &amp; Fit (3)</button>
+        <button type="button" class="filter-btn" data-filter="splits" aria-pressed="false">Data Splits &amp; CV (4)</button>
+        <button type="button" class="filter-btn" data-filter="clustering" aria-pressed="false">Clustering (2)</button>
+      </div>
+      <button type="button" class="study-btn" id="study-toggle" aria-pressed="false">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+        <span>Study Mode: Quiz Definitions</span>
+      </button>
+    </div>
+
+    <!-- High-Fidelity Semantic Table -->
+    <section class="table-card" id="table-card">
+      <div tabindex="0" role="region" aria-labelledby="vocab-caption" class="table-wrapper">
+        <table>
+          <caption id="vocab-caption" class="sr-only">ISYE 6501 Week 02 Model Validation and Clustering Core Vocabulary</caption>
+          <thead>
+            <tr>
+              <th scope="col">Term</th>
+              <th scope="col">Plain-English Definition</th>
+              <th scope="col">Everyday Analogy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1: Real Effect (Signal) -->
+            <tr data-category="signal" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge teal" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 17c3.5-8 7.5-8 10.5 0s5-6 7.5-10" />
+                      <circle cx="21" cy="7" r="1.5" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Real Effect (Signal)</span>
+                    <span class="cat-pill signal">Signal &amp; Fit</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag teal">True underlying pattern</span>
+                  <p class="def-text">Actual underlying relationships that hold true across all data, past and future.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Studying hard genuinely increases your exam score.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 2: Random Effect (Noise) -->
+            <tr data-category="signal" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge terracotta" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12l3-5 3 10 3-8 3 6 3-9 3 6" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Random Effect (Noise)</span>
+                    <span class="cat-pill signal">Signal &amp; Fit</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag">Unrepeatable coincidence</span>
+                  <p class="def-text">Coincidental quirks that happened by pure chance in your historical sample and will <em>not</em> repeat.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Everyone who wore a blue shirt last Tuesday happened to get an A on the quiz.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 3: Overfitting -->
+            <tr data-category="signal" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge terracotta" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 9v4" />
+                      <path d="M12 17h.01" />
+                      <path d="M10.3 3.9L2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Overfitting</span>
+                    <span class="cat-pill signal">Signal &amp; Fit</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag">Memorizing the noise</span>
+                  <p class="def-text">When a model is so flexible that it memorizes both the <strong>Real Effects</strong> AND the <strong>Random Noise</strong> in the training data, causing it to fail on new data.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Memorizing the exact letter sequence (<code>A, C, B, D...</code>) of a practice exam instead of learning the subject.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 4: Training Set -->
+            <tr data-category="splits" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge teal" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19v20H6.5a2.5 2.5 0 0 1 0-5H19" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Training Set</span>
+                    <span class="cat-pill splits">Data Splits</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag teal">50%–70% · Build &amp; fit</span>
+                  <p class="def-text">The largest portion of data used to <strong>build/fit</strong> the model and adjust its parameters.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Your textbook and homework problems.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 5: Validation Set -->
+            <tr data-category="splits" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge amber" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 11l3 3L22 4" />
+                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Validation Set</span>
+                    <span class="cat-pill splits">Data Splits</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag amber">15%–25% · Compare models</span>
+                  <p class="def-text">A second holdout portion used to <strong>compare multiple candidate models</strong> and pick the winner.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Practice exams you take to decide which study strategy works best.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 6: Test Set -->
+            <tr data-category="splits" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge terracotta" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="4" y="11" width="16" height="10" rx="2" />
+                      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                      <circle cx="12" cy="16" r="1.2" fill="currentColor" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Test Set</span>
+                    <span class="cat-pill splits">Data Splits</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag">15%–25% · Sealed final vault</span>
+                  <p class="def-text">A final untouched vault of data used <strong>only once at the very end</strong> to estimate how the winning model will perform in the real world.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  The official proctored final exam.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 7: K-Fold Cross-Validation -->
+            <tr data-category="splits" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge teal" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                      <path d="M3 3v5h5" />
+                      <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                      <path d="M16 16h5v5" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">K-Fold Cross-Validation</span>
+                    <span class="cat-pill splits">Data Splits</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag teal">Rotate validation across k slices</span>
+                  <p class="def-text">Splitting data into <em>k</em> equal slices (e.g., <code>5</code> slices) and taking turns holding out 1 slice for validation while training on the other <em>k &minus; 1</em> slices.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Having 5 practice tests and rotating which one you test yourself on.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 8: Clustering (Unsupervised) -->
+            <tr data-category="clustering" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge amber" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="7" cy="8" r="2.2" fill="currentColor" fill-opacity="0.22" />
+                      <circle cx="11" cy="6" r="1.8" fill="currentColor" fill-opacity="0.22" />
+                      <circle cx="8.5" cy="12" r="1.8" fill="currentColor" fill-opacity="0.22" />
+                      <circle cx="17" cy="16" r="2.2" fill="currentColor" fill-opacity="0.22" />
+                      <circle cx="14" cy="18.5" r="1.8" fill="currentColor" fill-opacity="0.22" />
+                      <circle cx="18.5" cy="12.5" r="1.8" fill="currentColor" fill-opacity="0.22" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Clustering (Unsupervised)</span>
+                    <span class="cat-pill clustering">Clustering</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag amber">No pre-existing labels</span>
+                  <p class="def-text">Grouping similar data points together when you <strong>do not have pre-existing category labels</strong>.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Dumping a box of assorted Lego bricks on the floor and sorting them into piles that look alike.
+                </div>
+              </td>
+            </tr>
+
+            <!-- Row 9: Centroid (Cluster Center) -->
+            <tr data-category="clustering" tabindex="0">
+              <th scope="row">
+                <div class="term-cell">
+                  <span class="icon-badge amber" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 21V4" />
+                      <path d="M5 4h11l-2.5 4L16 12H5" fill="currentColor" fill-opacity="0.22" />
+                    </svg>
+                  </span>
+                  <div class="term-meta">
+                    <span class="term-name">Centroid (Cluster Center)</span>
+                    <span class="cat-pill clustering">Clustering</span>
+                    <span class="study-hint">Click or press Enter to reveal</span>
+                  </div>
+                </div>
+              </th>
+              <td>
+                <div class="def-wrap">
+                  <span class="lead-tag amber">Center of gravity</span>
+                  <p class="def-text">The “center of gravity” (average point) at the middle of a cluster in K-Means.</p>
+                </div>
+              </td>
+              <td>
+                <div class="example-box">
+                  Placing a regional distribution warehouse right in the geographic center of the cities it serves.
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <footer class="card-footer">
+        <span>Showing <strong id="visible-count">9</strong> of 9 core terms</span>
+        <span>Part 1 · Level 1 (Remember) Reference</span>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const rows = document.querySelectorAll('tbody tr');
+      const countEl = document.getElementById('visible-count');
+      const studyToggle = document.getElementById('study-toggle');
+      const tableCard = document.getElementById('table-card');
+
+      filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+          filterButtons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+
+          let visible = 0;
+          rows.forEach((row) => {
+            const match = filter === 'all' || row.dataset.category === filter;
+            row.hidden = !match;
+            if (match) visible += 1;
+          });
+          countEl.textContent = String(visible);
+        });
+      });
+
+      studyToggle.addEventListener('click', () => {
+        const isActive = studyToggle.getAttribute('aria-pressed') === 'true';
+        const next = !isActive;
+        studyToggle.setAttribute('aria-pressed', String(next));
+        tableCard.classList.toggle('is-study-mode', next);
+        studyToggle.querySelector('span').textContent = next
+          ? 'Study Mode: Active (Hover/Click Row)'
+          : 'Study Mode: Quiz Definitions';
+        if (!next) {
+          rows.forEach((r) => r.classList.remove('revealed'));
+        }
+      });
+
+      rows.forEach((row) => {
+        const toggleReveal = () => {
+          if (tableCard.classList.contains('is-study-mode')) {
+            row.classList.toggle('revealed');
+          }
+        };
+        row.addEventListener('click', toggleReveal);
+        row.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            if (tableCard.classList.contains('is-study-mode')) {
+              event.preventDefault();
+              row.classList.toggle('revealed');
+            }
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
